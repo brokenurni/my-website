@@ -3,102 +3,378 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Game</title>
+  <title>Mini Game Hub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      text-align: center;
       background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-      overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
-    h1 {
-      color: #333;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      animation: fadeIn 1s ease-in-out;
-    }
-    #score {
-      font-size: 2rem;
-      margin: 20px;
-      transition: transform 0.2s;
-    }
+    h1 { margin-top: 20px; }
+    .menu, .game { display: none; }
+    .active { display: block; }
     button {
-      padding: 15px 30px;
-      font-size: 1.5rem;
-      cursor: pointer;
+      margin: 10px;
+      padding: 15px 25px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
       background: #4caf50;
       color: white;
-      border: none;
-      border-radius: 12px;
-      transition: transform 0.2s, background 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: 0.3s;
     }
-    button:hover {
-      background: #45a049;
-      transform: scale(1.1);
+    button:hover { background: #45a049; }
+    #score { font-size: 1.5rem; margin: 15px; }
+    #ticTacToe { display: grid; grid-template-columns: repeat(3, 100px); grid-gap: 5px; justify-content: center; margin: 20px auto; }
+    .cell {
+      width: 100px; height: 100px; background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; cursor: pointer; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .pop {
-      transform: scale(1.3);
-      color: #ff5722;
-    }
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.7;
-      animation: fly 1s ease-out forwards;
-    }
-    @keyframes fly {
-      from { transform: translate(0,0) scale(1); opacity: 1; }
-      to { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
+    canvas { background: #000; display: block; margin: 20px auto; }
+    .cardGrid { display: grid; grid-template-columns: repeat(4, 80px); grid-gap: 10px; justify-content: center; margin: 20px; }
+    .card {
+      width: 80px; height: 80px; background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
-  <h1>Click the Button Game!</h1>
-  <div id="score">Score: 0</div>
-  <button id="clickButton">Click Me!</button>
+
+  <!-- Sounds -->
+  <audio id="clickSound" src="click.mp3"></audio>
+  <audio id="winSound" src="win.mp3"></audio>
+  <audio id="gameOverSound" src="gameover.mp3"></audio>
+
+  <!-- Main Menu -->
+  <div class="menu active" id="menu">
+    <h1>🎮 Mini Game Hub</h1>
+    <button onclick="startGame('clickGame')">Click The Button</button>
+    <button onclick="startGame('rpsGame')">Rock Paper Scissors</button>
+    <button onclick="startGame('ticGame')">Tic Tac Toe</button>
+    <button onclick="startGame('snakeGame')">Snake</button>
+    <button onclick="startGame('guessGame')">Number Guess</button>
+    <button onclick="startGame('memoryGame')">Memory Match</button>
+  </div>
+
+  <!-- Click Game -->
+  <div class="game" id="clickGame">
+    <h1>Click the Button!</h1>
+    <div id="score">Score: 0</div>
+    <button id="clickButton">Click Me!</button>
+    <br><br>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
+
+  <!-- Rock Paper Scissors -->
+  <div class="game" id="rpsGame">
+    <h1>Rock Paper Scissors</h1>
+    <p id="rpsResult">Choose your move:</p>
+    <button onclick="playRPS('rock')">✊ Rock</button>
+    <button onclick="playRPS('paper')">✋ Paper</button>
+    <button onclick="playRPS('scissors')">✌ Scissors</button>
+    <br><br>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
+
+  <!-- Tic Tac Toe -->
+  <div class="game" id="ticGame">
+    <h1>Tic Tac Toe (vs Computer)</h1>
+    <div id="ticTacToe"></div>
+    <p id="ticResult"></p>
+    <button onclick="resetTicTacToe()">Restart</button>
+    <br><br>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
+
+  <!-- Snake Game -->
+  <div class="game" id="snakeGame">
+    <h1>Snake Game</h1>
+    <canvas id="snakeCanvas" width="300" height="300"></canvas>
+    <p id="snakeScore">Score: 0</p>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
+
+  <!-- Number Guess Game -->
+  <div class="game" id="guessGame">
+    <h1>Number Guessing Game</h1>
+    <p>Guess a number between 1 and 100!</p>
+    <input type="number" id="guessInput" min="1" max="100">
+    <button onclick="makeGuess()">Guess</button>
+    <p id="guessResult"></p>
+    <br><br>
+    <button onclick="resetGuess()">Restart</button>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
+
+  <!-- Memory Match Game -->
+  <div class="game" id="memoryGame">
+    <h1>Memory Match</h1>
+    <div class="cardGrid" id="cardGrid"></div>
+    <p id="memoryResult"></p>
+    <button onclick="resetMemory()">Restart</button>
+    <br><br>
+    <button onclick="goBack()">⬅ Back to Menu</button>
+  </div>
 
   <script>
+    // Unlock audio after first click
+    function enableAudio() {
+      document.querySelectorAll("audio").forEach(a => {
+        a.play().then(() => {
+          a.pause();
+          a.currentTime = 0;
+        }).catch(() => {});
+      });
+      document.removeEventListener("click", enableAudio);
+    }
+    document.addEventListener("click", enableAudio);
+
+    function playSound(id){
+      const s=document.getElementById(id);
+      s.currentTime=0;
+      s.volume=0.5;
+      s.play();
+    }
+
+    // Navigation
+    function startGame(gameId) {
+      document.querySelectorAll('.menu, .game').forEach(div => div.classList.remove('active'));
+      document.getElementById(gameId).classList.add('active');
+      if (gameId === 'snakeGame') startSnake();
+      if (gameId === 'guessGame') resetGuess();
+      if (gameId === 'memoryGame') resetMemory();
+    }
+    function goBack() {
+      document.querySelectorAll('.menu, .game').forEach(div => div.classList.remove('active'));
+      document.getElementById('menu').classList.add('active');
+    }
+
+    // Click Game
     let score = 0;
     const scoreDisplay = document.getElementById('score');
     const button = document.getElementById('clickButton');
-
-    button.addEventListener('click', (e) => {
+    button.addEventListener('click', () => {
       score++;
+      playSound('clickSound');
       scoreDisplay.textContent = `Score: ${score}`;
-
-      // Score pop effect
-      scoreDisplay.classList.add('pop');
-      setTimeout(() => scoreDisplay.classList.remove('pop'), 200);
-
-      // Particle effect
-      for (let i = 0; i < 5; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        particle.style.width = particle.style.height = Math.random() * 10 + 5 + "px";
-        particle.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
-
-        // Random direction
-        particle.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-        particle.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
-
-        particle.style.left = e.clientX + "px";
-        particle.style.top = e.clientY + "px";
-
-        document.body.appendChild(particle);
-
-        setTimeout(() => particle.remove(), 1000);
-      }
     });
+
+    // Rock Paper Scissors
+    function playRPS(playerChoice) {
+      playSound('clickSound');
+      const choices = ["rock", "paper", "scissors"];
+      const compChoice = choices[Math.floor(Math.random() * 3)];
+      let result = "";
+      if (playerChoice === compChoice) result = "It's a tie!";
+      else if (
+        (playerChoice === "rock" && compChoice === "scissors") ||
+        (playerChoice === "paper" && compChoice === "rock") ||
+        (playerChoice === "scissors" && compChoice === "paper")
+      ) { result = "You win! 🎉"; playSound('winSound'); }
+      else { result = "Computer wins! 😢"; playSound('gameOverSound'); }
+
+      document.getElementById("rpsResult").textContent =
+        `You chose ${playerChoice}, computer chose ${compChoice}. ${result}`;
+    }
+
+    // Tic Tac Toe
+    const board = Array(9).fill(null);
+    const ticDiv = document.getElementById("ticTacToe");
+    let currentPlayer = "X";
+
+    function renderBoard() {
+      ticDiv.innerHTML = "";
+      board.forEach((cell, i) => {
+        const div = document.createElement("div");
+        div.className = "cell";
+        div.textContent = cell ? cell : "";
+        if (!cell && currentPlayer === "X") {
+          div.addEventListener("click", () => makeMove(i));
+        }
+        ticDiv.appendChild(div);
+      });
+    }
+
+    function makeMove(i) {
+      if (!board[i] && currentPlayer === "X") {
+        board[i] = "X";
+        playSound('clickSound');
+        if (checkWinner()) return;
+        currentPlayer = "O";
+        renderBoard();
+        setTimeout(computerMove, 500);
+      }
+    }
+
+    function computerMove() {
+      if (!currentPlayer) return;
+      let available = board.map((v, i) => v ? null : i).filter(v => v !== null);
+      if (available.length === 0) return;
+      let move = available[Math.floor(Math.random() * available.length)];
+      board[move] = "O";
+      if (checkWinner()) return;
+      currentPlayer = "X";
+      renderBoard();
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let pattern of winPatterns) {
+        const [a,b,c] = pattern;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          document.getElementById("ticResult").textContent = `${board[a]} Wins! 🎉`;
+          playSound(board[a]==='X' ? 'winSound':'gameOverSound');
+          currentPlayer = null;
+          return true;
+        }
+      }
+      if (!board.includes(null)) {
+        document.getElementById("ticResult").textContent = "It's a Draw!";
+        playSound('gameOverSound');
+        return true;
+      }
+      return false;
+    }
+
+    function resetTicTacToe() {
+      for (let i = 0; i < 9; i++) board[i] = null;
+      currentPlayer = "X";
+      document.getElementById("ticResult").textContent = "";
+      renderBoard();
+    }
+    renderBoard();
+
+    // Snake
+    let snake, food, dx, dy, snakeInterval, snakeScore;
+    const canvas = document.getElementById("snakeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function startSnake() {
+      snake = [{x: 150, y: 150}];
+      food = {x: 100, y: 100};
+      dx = 10; dy = 0;
+      snakeScore = 0;
+      document.getElementById("snakeScore").textContent = "Score: 0";
+      if (snakeInterval) clearInterval(snakeInterval);
+      snakeInterval = setInterval(updateSnake, 100);
+      document.addEventListener("keydown", changeDirection);
+    }
+
+    function updateSnake() {
+      const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        playSound('winSound');
+        food = {
+          x: Math.floor(Math.random() * 30) * 10,
+          y: Math.floor(Math.random() * 30) * 10
+        };
+        snakeScore++;
+        document.getElementById("snakeScore").textContent = "Score: " + snakeScore;
+      } else {
+        snake.pop();
+      }
+
+      if (head.x < 0 || head.x >= 300 || head.y < 0 || head.y >= 300 || snakeCollision(head)) {
+        clearInterval(snakeInterval);
+        playSound('gameOverSound');
+        document.getElementById("snakeScore").textContent = "Game Over! Final Score: " + snakeScore;
+        return;
+      }
+      drawSnake();
+    }
+
+    function drawSnake() {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, 300, 300);
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(food.x, food.y, 10, 10);
+
+      ctx.fillStyle = "lime";
+      snake.forEach(part => ctx.fillRect(part.x, part.y, 10, 10));
+    }
+
+    function changeDirection(e) {
+      if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -10; }
+      else if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = 10; }
+      else if (e.key === "ArrowLeft" && dx === 0) { dx = -10; dy = 0; }
+      else if (e.key === "ArrowRight" && dx === 0) { dx = 10; dy = 0; }
+    }
+
+    function snakeCollision(head) {
+      return snake.slice(1).some(part => part.x === head.x && part.y === head.y);
+    }
+
+    // Number Guess Game
+    let secret, attempts;
+    function resetGuess(){
+      secret = Math.floor(Math.random()*100)+1;
+      attempts=0;
+      document.getElementById('guessResult').textContent="";
+      document.getElementById('guessInput').value="";
+    }
+    function makeGuess(){
+      let g=Number(document.getElementById('guessInput').value);
+      attempts++;
+      if(g===secret){
+        document.getElementById('guessResult').textContent=`Correct! 🎉 You guessed in ${attempts} tries.`;
+        playSound('winSound');
+      }else if(g<secret){
+        document.getElementById('guessResult').textContent="Too low!";
+        playSound('clickSound');
+      }else{
+        document.getElementById('guessResult').textContent="Too high!";
+        playSound('clickSound');
+      }
+    }
+
+    // Memory Match
+    let cards, flipped=[];
+    function resetMemory(){
+      const symbols=['🍎','🍌','🍇','🍓','🍒','🥝','🍍','🥭'];
+      cards=[...symbols,...symbols].sort(()=>Math.random()-0.5);
+      flipped=[];
+      const grid=document.getElementById('cardGrid');
+      grid.innerHTML="";
+      cards.forEach((c,i)=>{
+        const div=document.createElement('div');
+        div.className='card';
+        div.dataset.index=i;
+        div.textContent='?';
+        div.addEventListener('click',()=>flipCard(i,div));
+        grid.appendChild(div);
+      });
+      document.getElementById('memoryResult').textContent="";
+    }
+    function flipCard(i,div){
+      if(flipped.length===2||div.textContent!=="?")return;
+      div.textContent=cards[i];
+      flipped.push({i,div});
+      if(flipped.length===2){
+        if(cards[flipped[0].i]===cards[flipped[1].i]){
+          playSound('winSound');
+          flipped=[];
+          if([...document.querySelectorAll('.card')].every(c=>c.textContent!=='?')){
+            document.getElementById('memoryResult').textContent="You matched all! 🎉";
+          }
+        }else{
+          playSound('gameOverSound');
+          setTimeout(()=>{
+            flipped[0].div.textContent='?';
+            flipped[1].div.textContent='?';
+            flipped=[];
+          },800);
+        }
+      }
+    }
   </script>
 </body>
-</html>
