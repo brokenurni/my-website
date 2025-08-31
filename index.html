@@ -2,77 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mini Game Hub — Pro</title>
   <meta name="theme-color" content="#0ea5e9" />
   <style>
-    /* ===== Root & Reset ===== */
-    :root{
-      --bg1:#0ea5e9; --bg2:#22d3ee;
-      --surface: #ffffffee; --surface-2:#fafafacc;
-      --surface-dark:#1f2937ee; --surface-2-dark:#0b1220cc;
-      --text:#0f172a; --muted:#334155;  /* slate */
-      --text-d:#e5e7eb; --muted-d:#cbd5e1;
-      --accent:#10b981; --accent-2:#f59e0b; --danger:#ef4444;
-      --radius:16px; --shadow:0 10px 24px rgba(0,0,0,.15);
+    :root {
+      --bg1: #0ea5e9; --bg2: #22d3ee;
+      --surface: #ffffffee; --surface-2: #fafafacc;
+      --surface-dark: #1f2937ee; --surface-2-dark: #0b1220cc;
+      --text: #0f172a; --muted: #334155;
+      --text-d: #e5e7eb; --muted-d: #cbd5e1;
+      --accent: #10b981; --accent-2: #f59e0b; --danger: #ef4444;
+      --radius: 16px; --shadow: 0 10px 24px rgba(0,0,0,.15);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
-      color:var(--text);
-      background: linear-gradient(135deg,var(--bg1),var(--bg2));
-      background-attachment: fixed; transition: color .3s ease, background .4s ease;
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+      transition: color .3s ease, background .4s ease;
+      overscroll-behavior: none; /* Prevent pull-to-refresh */
     }
-    body.dark{ color:var(--text-d); background: linear-gradient(135deg,#0b1220,#1f2937); }
-    .app{ max-width:1100px; margin-inline:auto; padding:16px; }
-
-    /* ===== Topbar ===== */
-    .topbar{ position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:12px; justify-content:space-between; padding:12px 16px; margin:-16px -16px 16px; backdrop-filter: blur(8px); background:rgba(255,255,255,.18); }
-    body.dark .topbar{ background:rgba(0,0,0,.25); }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px; }
-    .logo{ width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:conic-gradient(from 210deg,var(--accent),var(--accent-2)); color:white; box-shadow: var(--shadow); font-weight:900; }
-    .actions{ display:flex; align-items:center; gap:8px; }
-    .btn{ border:none; border-radius:12px; padding:10px 14px; cursor:pointer; background:var(--accent); color:white; box-shadow:var(--shadow); font-weight:600; }
-    .btn.secondary{ background:transparent; color:inherit; border:2px solid currentColor; box-shadow:none; }
-
-    /* ===== Filters/Search ===== */
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:14px; }
-    .chips{ display:flex; gap:8px; flex-wrap:wrap; }
-    .chip{ padding:8px 12px; border-radius:999px; background:var(--surface-2); cursor:pointer; border:1px solid #e2e8f0; }
-    body.dark .chip{ background:var(--surface-2-dark); border-color:#334155; }
-    .chip.active{ outline:2px solid var(--accent); }
-    .search{ flex:1; min-width:200px; display:flex; }
-    .search input{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid #cbd5e1; background:var(--surface); }
-    body.dark .search input{ background:var(--surface-dark); color:var(--text-d); border-color:#334155; }
-
-    /* ===== Grid ===== */
-    .grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; }
-    .card{ background:var(--surface); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px; transition: transform .2s ease; }
-    .card:hover{ transform: translateY(-4px); }
-    body.dark .card{ background:var(--surface-dark); }
-    .card h3{ margin:0; font-size:1.05rem; }
-    .tag{ font-size:.8rem; opacity:.8; }
-    .meta{ display:flex; align-items:center; justify-content:space-between; font-size:.85rem; opacity:.9; }
-
-    /* ===== Game Container ===== */
-    .screen{ display:none; }
-    .screen.active{ display:block; }
-    .gamewrap{ background:var(--surface); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); }
-    body.dark .gamewrap{ background:var(--surface-dark); }
-    .back{ margin-bottom:12px; }
-
-    /* ===== Common Game UI ===== */
-    canvas{ display:block; margin:12px auto; background:#000; max-width:100%; height:auto; border-radius:12px; }
-    .grid-ttt{ display:grid; grid-template-columns:repeat(3, minmax(70px, 100px)); gap:8px; justify-content:center; margin:12px auto; }
-    .cell{ width:100%; aspect-ratio:1/1; background:#fff; display:grid; place-items:center; border-radius:10px; font-size:2rem; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.2); }
-    body.dark .cell{ background:#111827; }
-    .memory{ display:grid; grid-template-columns:repeat(auto-fit, minmax(60px, 1fr)); gap:10px; max-width:420px; margin:auto; }
-    .mcard{ width:100%; aspect-ratio:1/1; background:#fff; border-radius:10px; display:grid; place-items:center; font-size:1.6rem; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.2); }
-    body.dark .mcard{ background:#0f172a; }
-
-    /* ===== Footer ===== */
-    footer{ text-align:center; opacity:.8; padding:24px 8px; }
+    body.dark { color: var(--text-d); background: linear-gradient(135deg, #0b1220, #1f2937); }
+    .app { max-width: 1100px; margin-inline: auto; padding: 16px; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; justify-content: space-between;
+      padding: 12px 16px; margin: -16px -16px 16px; backdrop-filter: blur(8px); background: rgba(255,255,255,.18);
+    }
+    body.dark .topbar { background: rgba(0,0,0,.25); }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+    .logo { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(from 210deg, var(--accent), var(--accent-2)); color: white; box-shadow: var(--shadow); font-weight: 900; }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .btn {
+      border: none; border-radius: 12px; padding: 12px 16px; cursor: pointer; background: var(--accent); color: white;
+      box-shadow: var(--shadow); font-weight: 600; min-width: 48px; min-height: 48px; /* Larger touch targets */
+      transition: transform .2s ease, background .2s ease;
+    }
+    .btn:active { transform: scale(.95); }
+    .btn.secondary { background: transparent; color: inherit; border: 2px solid currentColor; box-shadow: none; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      padding: 10px 14px; border-radius: 999px; background: var(--surface-2); cursor: pointer; border: 1px solid #e2e8f0;
+      min-width: 48px; text-align: center;
+    }
+    body.dark .chip { background: var(--surface-2-dark); border-color: #334155; }
+    .chip.active { outline: 2px solid var(--accent); }
+    .search { flex: 1; min-width: 200px; display: flex; }
+    .search input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: var(--surface); }
+    body.dark .search input { background: var(--surface-dark); color: var(--text-d); border-color: #334155; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 10px; transition: transform .2s ease;
+    }
+    .card:hover { transform: translateY(-4px); }
+    body.dark .card { background: var(--surface-dark); }
+    .card h3 { margin: 0; font-size: 1.1rem; }
+    .tag { font-size: .85rem; opacity: .8; }
+    .meta { display: flex; align-items: center; justify-content: space-between; font-size: .9rem; opacity: .9; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .gamewrap { background: var(--surface); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+    body.dark .gamewrap { background: var(--surface-dark); }
+    .back { margin-bottom: 12px; }
+    canvas {
+      display: block; margin: 12px auto; background: #000; max-width: 100%; height: auto; border-radius: 12px;
+      touch-action: none; /* Prevent default touch behaviors */
+    }
+    .grid-ttt { display: grid; grid-template-columns: repeat(3, minmax(80px, 100px)); gap: 8px; justify-content: center; margin: 12px auto; }
+    .cell {
+      width: 100%; aspect-ratio: 1/1; background: #fff; display: grid; place-items: center; border-radius: 10px;
+      font-size: 2.5rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: transform .2s ease;
+    }
+    .cell:active { transform: scale(.95); }
+    body.dark .cell { background: #111827; }
+    .memory { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; max-width: 420px; margin: auto; }
+    .mcard {
+      width: 100%; aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: grid; place-items: center;
+      font-size: 1.8rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: transform .2s ease;
+    }
+    .mcard:active { transform: scale(.95); }
+    body.dark .mcard { background: #0f172a; }
+    footer { text-align: center; opacity: .8; padding: 24px 8px; }
+    .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 12px auto; }
+    .control-btn { min-width: 60px; min-height: 60px; font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -82,11 +98,11 @@
       <div class="actions">
         <button class="btn secondary" id="themeBtn" title="Toggle theme">🌙</button>
         <button class="btn secondary" id="soundBtn" title="Toggle sound">🔊</button>
+        <button class="btn secondary" id="hapticBtn" title="Toggle haptic feedback">📳</button>
         <button class="btn secondary" id="aboutBtn" title="About">ℹ️</button>
       </div>
     </div>
 
-    <!-- ===== HOME ===== -->
     <section id="home" class="screen active">
       <div class="toolbar">
         <div class="chips" id="catChips">
@@ -97,11 +113,9 @@
         </div>
         <div class="search"><input id="search" placeholder="Search games..." /></div>
       </div>
-
       <div class="grid" id="gameGrid"></div>
     </section>
 
-    <!-- ===== GAME VIEW ===== -->
     <section id="gameView" class="screen">
       <button class="btn secondary back" onclick="showHome()">⬅ Back</button>
       <div class="gamewrap">
@@ -115,267 +129,621 @@
   </div>
 
   <script>
-  // ========= Utilities =========
-  const $ = (q, el=document) => el.querySelector(q);
-  const $$ = (q, el=document) => [...el.querySelectorAll(q)];
-  const store = (k,v)=>localStorage.setItem(k, JSON.stringify(v));
-  const load = (k,d=null)=>{ try{const v=JSON.parse(localStorage.getItem(k)); return v===undefined||v===null?d:v;}catch{ return d; } };
+    // Utilities
+    const $ = (q, el = document) => el.querySelector(q);
+    const $$ = (q, el = document) => [...el.querySelectorAll(q)];
+    const store = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+    const load = (k, d = null) => { try { const v = JSON.parse(localStorage.getItem(k)); return v === undefined || v === null ? d : v; } catch { return d; } };
 
-  // Sound toggle
-  let SOUND_ENABLED = load('sound', true);
+    // Sound
+    let SOUND_ENABLED = load('sound', true);
+    function _beep(type = 'click') {
+      try {
+        const ctx = _beep.ctx || (_beep.ctx = new (window.AudioContext || window.webkitAudioContext)());
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        let f = 440, t = 0.08;
+        if (type === 'win') { f = 880; t = 0.15; }
+        if (type === 'lose') { f = 220; t = 0.25; }
+        if (type === 'move') { f = 660; t = 0.1; } // New sound for movement
+        o.frequency.value = f; g.gain.value = 0.02; o.start(); setTimeout(() => o.stop(), t * 1000);
+      } catch (e) { /* audio may be blocked */ }
+    }
+    function beep(type = 'click') { if (SOUND_ENABLED) _beep(type); }
 
-  // Simple web-audio beeps (no mp3 files needed on GitHub Pages)
-  function _beep(type='click'){
-    try{
-      const ctx = _beep.ctx || (_beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      let f=440, t=0.08;
-      if(type==='win'){ f=880; t=0.15; }
-      if(type==='lose'){ f=220; t=0.25; }
-      o.frequency.value=f; g.gain.value=0.02; o.start(); setTimeout(()=>{o.stop();}, t*1000);
-    }catch(e){ /* audio may be blocked */ }
-  }
-  function beep(type='click'){ if(SOUND_ENABLED) _beep(type); }
+    // Haptic Feedback
+    let HAPTIC_ENABLED = load('haptic', true);
+    function vibrate(pattern = 50) {
+      if (HAPTIC_ENABLED && 'vibrate' in navigator) navigator.vibrate(pattern);
+    }
+    const hapticBtn = $('#hapticBtn');
+    function setHaptic(on) {
+      HAPTIC_ENABLED = !!on;
+      hapticBtn.textContent = HAPTIC_ENABLED ? '📳' : '📴';
+      store('haptic', HAPTIC_ENABLED);
+    }
+    setHaptic(HAPTIC_ENABLED);
+    hapticBtn.onclick = () => setHaptic(!HAPTIC_ENABLED);
 
-  // Theme
-  const themeBtn = document.getElementById('themeBtn');
-  function setTheme(mode){ document.body.classList.toggle('dark', mode==='dark'); themeBtn.textContent = mode==='dark'?'☀️':'🌙'; store('theme', mode); }
-  setTheme(load('theme','light'));
-  themeBtn.onclick = ()=> setTheme(document.body.classList.contains('dark')?'light':'dark');
+    // Theme
+    const themeBtn = $('#themeBtn');
+    function setTheme(mode) {
+      document.body.classList.toggle('dark', mode === 'dark');
+      themeBtn.textContent = mode === 'dark' ? '☀️' : '🌙';
+      store('theme', mode);
+    }
+    setTheme(load('theme', 'light'));
+    themeBtn.onclick = () => setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
 
-  // Sound button UI
-  const soundBtn = document.getElementById('soundBtn');
-  function setSound(on){ SOUND_ENABLED = !!on; soundBtn.textContent = SOUND_ENABLED? '🔊':'🔈'; store('sound', SOUND_ENABLED); }
-  setSound(SOUND_ENABLED);
-  soundBtn.onclick = ()=> setSound(!SOUND_ENABLED);
+    // Sound Button
+    const soundBtn = $('#soundBtn');
+    function setSound(on) {
+      SOUND_ENABLED = !!on;
+      soundBtn.textContent = SOUND_ENABLED ? '🔊' : '🔈';
+      store('sound', SOUND_ENABLED);
+    }
+    setSound(SOUND_ENABLED);
+    soundBtn.onclick = () => setSound(!SOUND_ENABLED);
 
-  // Routing
-  const home = document.getElementById('home');
-  const gameView = document.getElementById('gameView');
-  const gameRoot = document.getElementById('gameRoot');
-  const gameTitle = document.getElementById('gameTitle');
-  const gameMeta = document.getElementById('gameMeta');
-  function showHome(){ gameView.classList.remove('active'); home.classList.add('active'); cleanupCurrentGame(); }
-  function showGame(){ home.classList.remove('active'); gameView.classList.add('active'); }
+    // Routing
+    const home = $('#home');
+    const gameView = $('#gameView');
+    const gameRoot = $('#gameRoot');
+    const gameTitle = $('#gameTitle');
+    const gameMeta = $('#gameMeta');
+    function showHome() { gameView.classList.remove('active'); home.classList.add('active'); cleanupCurrentGame(); }
+    function showGame() { home.classList.remove('active'); gameView.classList.add('active'); }
 
-  // High score helpers (normalized)
-  function getHS(id){ const v = load('hs_'+id, null); return v===null?null:v; }
-  function setHS(id, value){ if(value===null||value===undefined) return; store('hs_'+id, value); }
-  function hsDisplay(v){ return v===null?'-':v; }
+    // High Scores
+    function getHS(id) { const v = load('hs_' + id, null); return v === null ? null : v; }
+    function setHS(id, value) { if (value === null || value === undefined) return; store('hs_' + id, value); }
+    function hsDisplay(v) { return v === null ? '-' : v; }
 
-  // Catalog
-  const GAMES = [
-    { id:'clicker', name:'Click The Button', cat:'quick', desc:'Tap to score. Simple & addictive.', init:initClicker },
-    { id:'rps', name:'Rock Paper Scissors', cat:'quick', desc:'Classic luck & strategy.', init:initRPS },
-    { id:'tictactoe', name:'Tic Tac Toe', cat:'puzzle', desc:'Play vs simple computer.', init:initTicTacToe },
-    { id:'snake', name:'Snake', cat:'arcade', desc:'Eat food, avoid walls.', init:initSnake },
-    { id:'guess', name:'Number Guess', cat:'puzzle', desc:'1–100 guessing game.', init:initGuess },
-    { id:'memory', name:'Memory Match', cat:'puzzle', desc:'Match all pairs.', init:initMemory },
-    { id:'reaction', name:'Reaction Timer', cat:'quick', desc:'How fast can you tap?', init:initReaction },
-    { id:'math', name:'Math Quiz', cat:'puzzle', desc:'Quick mental math.', init:initMath },
-    { id:'flappy', name:'Flappy', cat:'arcade', desc:'Dodge the pipes!', init:initFlappy },
-    { id:'2048', name:'2048', cat:'puzzle', desc:'Merge tiles to 2048.', init:init2048 },
-  ];
+    // Catalog
+    const GAMES = [
+      { id: 'clicker', name: 'Click The Button', cat: 'quick', desc: 'Tap as fast as you can!', init: initClicker },
+      { id: 'rps', name: 'Rock Paper Scissors', cat: 'quick', desc: 'Classic luck & strategy.', init: initRPS },
+      { id: 'tictactoe', name: 'Tic Tac Toe', cat: 'puzzle', desc: 'Play vs simple computer.', init: initTicTacToe },
+      { id: 'snake', name: 'Snake', cat: 'arcade', desc: 'Eat food, avoid walls.', init: initSnake },
+      { id: 'guess', name: 'Number Guess', cat: 'puzzle', desc: '1–100 guessing game.', init: initGuess },
+      { id: 'memory', name: 'Memory Match', cat: 'puzzle', desc: 'Match all pairs.', init: initMemory },
+      { id: 'reaction', name: 'Reaction Timer', cat: 'quick', desc: 'How fast can you tap?', init: initReaction },
+      { id: 'math', name: 'Math Quiz', cat: 'puzzle', desc: 'Quick mental math.', init: initMath },
+      { id: 'flappy', name: 'Flappy', cat: 'arcade', desc: 'Dodge the pipes!', init: initFlappy },
+      { id: '2048', name: '2048', cat: 'puzzle', desc: 'Merge tiles to 2048.', init: init2048 },
+    ];
 
-  // Render grid
-  const grid = document.getElementById('gameGrid');
-  const yearEl = document.getElementById('year'); yearEl.textContent = new Date().getFullYear();
-  function renderGrid(){
-    const q = $('#search').value.toLowerCase();
-    const activeCat = $('.chip.active').dataset.cat;
-    grid.innerHTML = '';
-    GAMES.filter(g=> (activeCat==='all'||g.cat===activeCat) && (g.name.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q)))
-      .forEach(g=>{
-        const best = hsDisplay( getHS(g.id) );
-        const card = document.createElement('div');
-        card.className='card';
-        card.innerHTML = `<h3>${g.name}</h3>
-          <div class="tag">${g.cat.toUpperCase()}</div>
-          <p class="muted">${g.desc}</p>
-          <div class="meta"><span>High score: <strong>${best}</strong></span><button class="btn" data-id="${g.id}">Play</button></div>`;
-        card.querySelector('button').onclick = ()=> openGame(g.id);
-        grid.appendChild(card);
-      });
-  }
-  // Filters
-  $$('#catChips .chip').forEach(c=> c.onclick = ()=>{ $$('#catChips .chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); renderGrid(); });
-  $('#search').addEventListener('input', renderGrid);
-  renderGrid();
-
-  // Open game
-  let currentGameCleanup = null;
-  function cleanupCurrentGame(){ if(currentGameCleanup) try{ currentGameCleanup(); }catch(e){} currentGameCleanup=null; gameRoot.innerHTML=''; }
-  function openGame(id){ const g = GAMES.find(x=>x.id===id); if(!g) return; cleanupCurrentGame();
-    gameTitle.textContent = g.name;
-    const best = hsDisplay( getHS(id) );
-    gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${best}</b></div>`;
-    showGame();
-    // Provide a safe onHS wrapper that updates HS display and storage
-    const onHS = (score)=>{
-      // Accept numbers or strings. If numeric and higher than prev, update. If non-numeric, just store.
-      const prev = getHS(id);
-      if(typeof score === 'number'){
-        if(prev===null || score>prev){ setHS(id, score); gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${score}</b></div>`; renderGrid(); }
-      } else if(typeof score === 'string'){
-        // For simple games like RPS where result is 'Win', store the string if not set
-        if(prev===null || prev!==score){ setHS(id, score); gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${score}</b></div>`; renderGrid(); }
-      }
-    };
-    try{ currentGameCleanup = g.init(gameRoot, onHS) || null; }catch(e){ console.error(e); }
-  }
-
-  // ========= GAMES =========
-  // 1) Clicker
-  function initClicker(root, onHS){
-    const scoreEl = document.createElement('div'); scoreEl.textContent='Score: 0'; scoreEl.style.fontWeight='700'; scoreEl.style.margin='8px';
-    const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Click Me!';
-    const reset = document.createElement('button'); reset.className='btn secondary'; reset.textContent='Reset';
-    root.append(scoreEl, btn, reset);
-    let s=0; btn.onclick=()=>{ s++; beep('click'); scoreEl.textContent='Score: '+s; onHS(s); };
-    reset.onclick=()=>{ s=0; scoreEl.textContent='Score: 0'; };
-    return ()=>{};
-  }
-
-  // 2) RPS
-  function initRPS(root, onHS){
-    root.innerHTML = `<p>Choose your move:</p>`;
-    const res = document.createElement('p');
-    ['Rock','Paper','Scissors'].forEach(m=>{
-      const b=document.createElement('button'); b.className='btn'; b.textContent=m; b.onclick=()=>play(m.toLowerCase()); root.appendChild(b);
+    // Render Grid
+    const grid = $('#gameGrid');
+    const yearEl = $('#year'); yearEl.textContent = new Date().getFullYear();
+    function renderGrid() {
+      const q = $('#search').value.toLowerCase();
+      const activeCat = $('.chip.active').dataset.cat;
+      grid.innerHTML = '';
+      GAMES.filter(g => (activeCat === 'all' || g.cat === activeCat) && (g.name.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q)))
+        .forEach(g => {
+          const best = hsDisplay(getHS(g.id));
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<h3>${g.name}</h3>
+            <div class="tag">${g.cat.toUpperCase()}</div>
+            <p class="muted">${g.desc}</p>
+            <div class="meta"><span>High score: <strong>${best}</strong></span><button class="btn" data-id="${g.id}">Play</button></div>`;
+          const playBtn = card.querySelector('button');
+          playBtn.addEventListener('click', () => openGame(g.id));
+          playBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openGame(g.id); vibrate(20); });
+          grid.appendChild(card);
+        });
+    }
+    $$('#catChips .chip').forEach(c => {
+      c.addEventListener('click', () => { $$('#catChips .chip').forEach(x => x.classList.remove('active')); c.classList.add('active'); renderGrid(); });
+      c.addEventListener('touchstart', (e) => { e.preventDefault(); $$('#catChips .chip').forEach(x => x.classList.remove('active')); c.classList.add('active'); renderGrid(); vibrate(20); });
     });
-    root.appendChild(res);
-    function play(me){
-      const c = ['rock','paper','scissors'][Math.floor(Math.random()*3)];
-      let r='';
-      if(me===c) r="Tie!"; else if((me==='rock'&&c==='scissors')||(me==='paper'&&c==='rock')||(me==='scissors'&&c==='paper')){ r='You win!'; beep('win'); onHS('Win'); } else { r='Computer wins!'; beep('lose'); }
-      res.textContent = `You chose ${me}, computer chose ${c}. ${r}`;
+    $('#search').addEventListener('input', renderGrid);
+    renderGrid();
+
+    // Open Game
+    let currentGameCleanup = null;
+    function cleanupCurrentGame() {
+      if (currentGameCleanup) try { currentGameCleanup(); } catch (e) {}
+      currentGameCleanup = null;
+      gameRoot.innerHTML = '';
     }
-    return ()=>{};
-  }
-
-  // 3) Tic Tac Toe (simple AI)
-  function initTicTacToe(root, onHS){
-    const board = Array(9).fill(null); let current='X';
-    const grid = document.createElement('div'); grid.className='grid-ttt';
-    const info = document.createElement('p');
-    const reset = document.createElement('button'); reset.className='btn secondary'; reset.textContent='Restart'; reset.onclick=restart;
-    root.append(grid, info, reset);
-    render();
-    function render(){ grid.innerHTML=''; board.forEach((v,i)=>{ const d=document.createElement('div'); d.className='cell'; d.textContent=v||''; if(!v && current==='X'){ d.onclick=()=>move(i); } grid.appendChild(d); }); }
-    function move(i){ if(board[i]||current!=='X')return; board[i]='X'; beep('click'); if(check())return; current='O'; render(); setTimeout(comp, 300); }
-    function comp(){ const avail=board.map((v,i)=>v?null:i).filter(v=>v!==null); if(!avail.length) return; const m=avail[Math.floor(Math.random()*avail.length)]; board[m]='O'; if(check())return; current='X'; render(); }
-    function check(){ const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(const [a,b,c] of w){ if(board[a]&&board[a]===board[b]&&board[a]===board[c]){ info.textContent=`${board[a]} Wins!`; onHS(board[a]==='X'?1:0); beep(board[a]==='X'?'win':'lose'); current=null; return true; } } if(!board.includes(null)){ info.textContent='Draw!'; beep('lose'); return true; } return false; }
-    function restart(){ for(let i=0;i<9;i++)board[i]=null; current='X'; info.textContent=''; render(); }
-    return ()=>{};
-  }
-
-  // 4) Snake
-  function initSnake(root, onHS){
-    const cvs=document.createElement('canvas'); cvs.width=320; cvs.height=320; const ctx=cvs.getContext('2d'); root.appendChild(cvs);
-    let snake=[{x:160,y:160}], food={x:80,y:80}, dx=16, dy=0, score=0; let loop;
-    function rnd(){ return Math.floor(Math.random()*20)*16; }
-    function resetFood(){ food={x:rnd(), y:rnd()}; }
-    function hit(a){ return snake.slice(1).some(p=>p.x===a.x && p.y===a.y); }
-    function draw(){ ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height); ctx.fillStyle='red'; ctx.fillRect(food.x,food.y,16,16); ctx.fillStyle='lime'; snake.forEach(p=>ctx.fillRect(p.x,p.y,16,16)); }
-    function step(){ const head={x:snake[0].x+dx,y:snake[0].y+dy}; snake.unshift(head); if(head.x===food.x&&head.y===food.y){ score++; beep('win'); resetFood(); } else { snake.pop(); }
-      if(head.x<0||head.y<0||head.x>=cvs.width||head.y>=cvs.height||hit(head)){ clearInterval(loop); onHS(score); return; }
-      draw(); }
-    function key(e){ if(e.key==='ArrowUp'&&dy===0){dx=0;dy=-16}else if(e.key==='ArrowDown'&&dy===0){dx=0;dy=16}else if(e.key==='ArrowLeft'&&dx===0){dx=-16;dy=0}else if(e.key==='ArrowRight'&&dx===0){dx=16;dy=0} }
-    window.addEventListener('keydown', key);
-    loop=setInterval(step, 100);
-    draw();
-    return ()=>{ clearInterval(loop); window.removeEventListener('keydown', key); };
-  }
-
-  // 5) Number Guess
-  function initGuess(root, onHS){
-    const secret = Math.floor(Math.random()*100)+1; let tries=0;
-    const inp=document.createElement('input'); inp.type='number'; inp.min=1; inp.max=100; inp.placeholder='1-100'; inp.style.padding='10px'; inp.style.borderRadius='10px';
-    const btn=document.createElement('button'); btn.className='btn'; btn.textContent='Guess';
-    const out=document.createElement('p');
-    root.append(inp, btn, out);
-    btn.onclick=()=>{ const g=Number(inp.value); if(!g) return; tries++; if(g===secret){ out.textContent=`Correct in ${tries} tries!`; beep('win'); onHS(101-tries); } else { out.textContent=g<secret?'Too low!':'Too high!'; beep('click'); } };
-    return ()=>{};
-  }
-
-  // 6) Memory Match
-  function initMemory(root, onHS){
-    const symbols=['🍎','🍌','🍇','🍓','🍒','🥝','🍍','🥭'];
-    const cards=[...symbols,...symbols].sort(()=>Math.random()-0.5);
-    const grid=document.createElement('div'); grid.className='memory'; const out=document.createElement('p');
-    root.append(grid, out);
-    let flipped=[]; let found=0; let clicks=0;
-    cards.forEach((c,i)=>{ const d=document.createElement('div'); d.className='mcard'; d.textContent='?'; d.onclick=()=>flip(i,d); grid.appendChild(d); });
-    function flip(i,div){ if(flipped.length===2||div.textContent!=="?")return; div.textContent=cards[i]; clicks++; flipped.push({i,div}); if(flipped.length===2){ if(cards[flipped[0].i]===cards[flipped[1].i]){ beep('win'); found+=2; flipped=[]; if(found===cards.length){ out.textContent=`All matched in ${clicks} flips!`; onHS(-clicks); } } else { beep('lose'); setTimeout(()=>{ flipped[0].div.textContent='?'; flipped[1].div.textContent='?'; flipped=[]; }, 700); } } }
-    return ()=>{};
-  }
-
-  // 7) Reaction Timer
-  function initReaction(root, onHS){
-    const msg=document.createElement('h3'); const btn=document.createElement('button'); btn.className='btn'; btn.textContent='Start';
-    root.append(msg, btn);
-    let t1=null, waiting=false; msg.textContent='Click Start, then tap when it turns GREEN';
-    btn.onclick=()=>{ if(waiting) return; waiting=true; btn.textContent='Wait...'; msg.textContent='...'; const delay=800+Math.random()*2200; setTimeout(()=>{ beep('win'); document.body.style.setProperty('--flash',''); btn.style.background= 'green'; msg.textContent='TAP!'; t1=performance.now(); }, delay); };
-    root.onclick=()=>{ if(!waiting||!t1) return; const rt=Math.round(performance.now()-t1); msg.textContent=`Reaction: ${rt} ms`; btn.textContent='Start again'; btn.style.background=''; waiting=false; t1=null; onHS(-rt); };
-    return ()=>{};
-  }
-
-  // 8) Math Quiz
-  function initMath(root, onHS){
-    let score=0, q=0; const total=10; const p=document.createElement('p'); const inp=document.createElement('input'); inp.type='number'; inp.style.padding='10px'; inp.style.borderRadius='10px'; const btn=document.createElement('button'); btn.className='btn'; btn.textContent='Submit'; const meta=document.createElement('div'); meta.style.margin='8px 0'; root.append(p, inp, btn, meta);
-    function next(){ if(q===total){ p.textContent=`Done! Score: ${score}/${total}`; onHS(score); btn.disabled=true; return; } q++; const a=Math.floor(Math.random()*10)+1; const b=Math.floor(Math.random()*10)+1; const ops=['+','-','×']; const op=ops[Math.floor(Math.random()*ops.length)]; const ans=(op==='+')?a+b:(op==='-')?a-b:a*b; p.dataset.ans=ans; p.textContent=`Q${q}: ${a} ${op} ${b} = ?`; inp.value=''; meta.textContent=`Score: ${score}`; }
-    btn.onclick=()=>{ const v=Number(inp.value); if(inp.value==='') return; if(v==Number(p.dataset.ans)){ score++; beep('win'); } else { beep('lose'); } next(); };
-    next();
-    return ()=>{};
-  }
-
-  // 9) Flappy (very small clone)
-  function initFlappy(root, onHS){
-    const cvs=document.createElement('canvas'); cvs.width=360; cvs.height=480; const ctx=cvs.getContext('2d'); root.appendChild(cvs);
-    let x=80, y=200, vy=0, g=0.5, jump=-8, pipes=[], frame=0, alive=true, score=0;
-    function addPipe(){ const gap=120, top=60+Math.random()*220; pipes.push({x:cvs.width, y:top, w:52, gap}); }
-    function reset(){ x=80;y=200;vy=0;pipes=[];frame=0;alive=true;score=0; for(let i=0;i<3;i++){ addPipe(); pipes[i].x+=i*180; } }
-    reset();
-    function draw(){ ctx.clearRect(0,0,cvs.width,cvs.height); ctx.fillStyle='#4cc9f0'; ctx.fillRect(0,0,cvs.width,cvs.height); ctx.fillStyle='#2a9d8f'; pipes.forEach(p=>{ ctx.fillRect(p.x,0,p.w,p.y); ctx.fillRect(p.x,p.y+p.gap,p.w,cvs.height); }); ctx.fillStyle='yellow'; ctx.beginPath(); ctx.arc(x,y,12,0,Math.PI*2); ctx.fill(); ctx.fillStyle='white'; ctx.fillText('Score: '+score, 10, 20); }
-    function step(){ if(!alive) return; frame++; if(frame%120===0) addPipe(); vy+=g; y+=vy; pipes.forEach(p=>{ p.x-=2; }); // remove offscreen
-      pipes = pipes.filter(p=> p.x + p.w > -10 );
-      // Collisions
-      for(const p of pipes){ if(x+12>p.x && x-12<p.x+p.w){ if(y-12<p.y || y+12>p.y+p.gap){ alive=false; beep('lose'); onHS(score); } } if(!p.passed && (p.x + p.w) < (x-12)){ p.passed=true; score++; beep('win'); } }
-      if(y>cvs.height-12 || y<12){ alive=false; beep('lose'); onHS(score); }
-      draw(); requestAnimationFrame(step); }
-    function flap(){ vy=jump; beep('click'); if(!alive){ reset(); step(); } }
-    cvs.addEventListener('pointerdown', flap);
-    const keyHandler = e=>{ if(e.code==='Space') flap(); };
-    window.addEventListener('keydown', keyHandler);
-    step();
-    return ()=>{ cvs.removeEventListener('pointerdown', flap); window.removeEventListener('keydown', keyHandler); };
-  }
-
-  // 10) 2048 (compact)
-  function init2048(root, onHS){
-    const size=4; let grid=Array.from({length:size},()=>Array(size).fill(0)); const wrap=document.createElement('div'); wrap.style.display='inline-grid'; wrap.style.gridTemplateColumns=`repeat(${size},70px)`; wrap.style.gap='8px'; const tiles=[]; for(let r=0;r<size;r++){ for(let c=0;c<size;c++){ const d=document.createElement('div'); d.style.width='70px'; d.style.height='70px'; d.style.borderRadius='10px'; d.style.display='grid'; d.style.placeItems='center'; d.style.fontWeight='700'; d.style.background='#e5e7eb'; tiles.push(d); wrap.appendChild(d); } }
-    const meta=document.createElement('p'); const reset=document.createElement('button'); reset.className='btn secondary'; reset.textContent='Restart'; reset.onclick=restart; root.append(wrap, meta, reset);
-    function spawn(){ const empty=[]; for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(!grid[r][c]) empty.push([r,c]); if(!empty.length) return; const [r,c]=empty[Math.floor(Math.random()*empty.length)]; grid[r][c]=Math.random()<0.9?2:4; }
-    function draw(){ for(let r=0;r<size;r++)for(let c=0;c<size;c++){ const v=grid[r][c]; const d=tiles[r*size+c]; d.textContent=v||''; d.style.background=v?`hsl(${(Math.log2(v)%12)*30},70%,70%)`:'#e5e7eb'; } meta.textContent='Score: '+score; }
-    function slide(row){ row=row.filter(v=>v); for(let i=0;i<row.length-1;i++){ if(row[i]===row[i+1]){ row[i]*=2; score+=row[i]; row[i+1]=0; } } return row.filter(v=>v); }
-    function move(dir){ let moved=false; if(dir==='left'||dir==='right'){ for(let r=0;r<size;r++){ let row=[...grid[r]]; if(dir==='right') row = row.reverse(); row = slide(row); while(row.length<size) row.push(0); if(dir==='right') row = row.reverse(); const newRow = row; if(newRow.some((v,i)=>v!==grid[r][i])) moved=true; grid[r]=newRow; } } else { for(let c=0;c<size;c++){ let col=[]; for(let r=0;r<size;r++) col.push(grid[r][c]); col = (dir==='down')? col.reverse() : col; col = slide(col); while(col.length<size) col.push(0); if(dir==='down') col = col.reverse(); for(let r=0;r<size;r++){ if(grid[r][c]!==col[r]) moved=true; grid[r][c]=col[r]; } } }
-      if(moved){ spawn(); draw(); if(checkOver()){ onHS(score); } }
+    function openGame(id) {
+      const g = GAMES.find(x => x.id === id); if (!g) return;
+      cleanupCurrentGame();
+      gameTitle.textContent = g.name;
+      const best = hsDisplay(getHS(id));
+      gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${best}</b></div>`;
+      showGame();
+      const onHS = (score) => {
+        const prev = getHS(id);
+        if (typeof score === 'number') {
+          if (prev === null || score > prev) {
+            setHS(id, score);
+            gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${score}</b></div>`;
+            renderGrid();
+          }
+        } else if (typeof score === 'string') {
+          if (prev === null || prev !== score) {
+            setHS(id, score);
+            gameMeta.innerHTML = `<div>Category: <b>${g.cat}</b></div><div>Best: <b>${score}</b></div>`;
+            renderGrid();
+          }
+        }
+      };
+      try { currentGameCleanup = g.init(gameRoot, onHS) || null; } catch (e) { console.error(e); }
     }
-    function checkOver(){ for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(grid[r][c]===0) return false; // any merge?
-      for(let r=0;r<size;r++)for(let c=0;c<size-1;c++) if(grid[r][c]===grid[r][c+1]) return false; for(let c=0;c<size;c++)for(let r=0;r<size-1;r++) if(grid[r][c]===grid[r+1][c]) return false; return true; }
-    function key(e){ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){ e.preventDefault(); move(e.key.replace('Arrow','').toLowerCase()); } }
-    function restart(){ score=0; grid=Array.from({length:size},()=>Array(size).fill(0)); spawn(); spawn(); draw(); }
-    let score=0; window.addEventListener('keydown', key); restart();
-    return ()=>{ window.removeEventListener('keydown', key); };
-  }
 
-  // About
-  document.getElementById('aboutBtn').onclick = ()=>{
-    alert(`Mini Game Hub — Pro\n\nAll games are built with vanilla HTML/CSS/JS and work offline.\nHigh scores are saved in your browser. Enjoy!`);
-  };
+    // Games
+    function initClicker(root, onHS) {
+      const scoreEl = document.createElement('div'); scoreEl.textContent = 'Score: 0'; scoreEl.style.fontWeight = '700'; scoreEl.style.margin = '8px';
+      const timeEl = document.createElement('div'); timeEl.textContent = 'Time: 30s'; timeEl.style.margin = '8px';
+      const btn = document.createElement('button'); btn.className = 'btn control-btn'; btn.textContent = 'Tap Me!';
+      const reset = document.createElement('button'); reset.className = 'btn secondary'; reset.textContent = 'Reset';
+      root.append(scoreEl, timeEl, btn, reset);
+      let s = 0, time = 30, timer = null;
+      const increment = () => {
+        if (time <= 0) return;
+        s++; beep('click'); vibrate(20);
+        scoreEl.textContent = 'Score: ' + s;
+        onHS(s);
+      };
+      btn.addEventListener('click', increment);
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); increment(); });
+      const resetGame = () => {
+        s = 0; time = 30;
+        scoreEl.textContent = 'Score: 0';
+        timeEl.textContent = 'Time: 30s';
+        if (timer) clearInterval(timer);
+        timer = setInterval(() => {
+          time--; timeEl.textContent = `Time: ${time}s`;
+          if (time <= 0) { clearInterval(timer); btn.disabled = true; }
+        }, 1000);
+      };
+      reset.addEventListener('click', resetGame);
+      reset.addEventListener('touchstart', (e) => { e.preventDefault(); resetGame(); });
+      resetGame();
+      return () => { if (timer) clearInterval(timer); };
+    }
 
+    function initRPS(root, onHS) {
+      root.innerHTML = `<p>Choose your move:</p>`;
+      const res = document.createElement('p');
+      const controls = document.createElement('div'); controls.className = 'controls';
+      ['Rock', 'Paper', 'Scissors'].forEach(m => {
+        const b = document.createElement('button'); b.className = 'btn control-btn'; b.textContent = m;
+        const playMove = () => {
+          const c = ['rock', 'paper', 'scissors'][Math.floor(Math.random() * 3)];
+          let r = '';
+          if (m.toLowerCase() === c) r = "Tie!";
+          else if ((m.toLowerCase() === 'rock' && c === 'scissors') || (m.toLowerCase() === 'paper' && c === 'rock') || (m.toLowerCase() === 'scissors' && c === 'paper')) {
+            r = 'You win!'; beep('win'); vibrate(50); onHS('Win');
+          } else { r = 'Computer wins!'; beep('lose'); vibrate(100); }
+          res.textContent = `You chose ${m}, computer chose ${c}. ${r}`;
+        };
+        b.addEventListener('click', playMove);
+        b.addEventListener('touchstart', (e) => { e.preventDefault(); playMove(); });
+        controls.appendChild(b);
+      });
+      root.append(controls, res);
+      return () => {};
+    }
+
+    function initTicTacToe(root, onHS) {
+      const board = Array(9).fill(null); let current = 'X';
+      const grid = document.createElement('div'); grid.className = 'grid-ttt';
+      const info = document.createElement('p');
+      const reset = document.createElement('button'); reset.className = 'btn secondary'; reset.textContent = 'Restart';
+      root.append(grid, info, reset);
+      function render() {
+        grid.innerHTML = '';
+        board.forEach((v, i) => {
+          const d = document.createElement('div'); d.className = 'cell'; d.textContent = v || '';
+          if (!v && current === 'X') {
+            const move = () => { if (board[i] || current !== 'X') return; board[i] = 'X'; beep('click'); vibrate(20); if (check()) return; current = 'O'; render(); setTimeout(comp, 300); };
+            d.addEventListener('click', move);
+            d.addEventListener('touchstart', (e) => { e.preventDefault(); move(); });
+          }
+          grid.appendChild(d);
+        });
+      }
+      function comp() {
+        const avail = board.map((v, i) => v ? null : i).filter(v => v !== null);
+        if (!avail.length) return;
+        const m = avail[Math.floor(Math.random() * avail.length)];
+        board[m] = 'O';
+        if (check()) return;
+        current = 'X';
+        render();
+      }
+      function check() {
+        const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for (const [a, b, c] of w) {
+          if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            info.textContent = `${board[a]} Wins!`;
+            onHS(board[a] === 'X' ? 1 : 0);
+            beep(board[a] === 'X' ? 'win' : 'lose');
+            vibrate(board[a] === 'X' ? 50 : 100);
+            current = null;
+            return true;
+          }
+        }
+        if (!board.includes(null)) { info.textContent = 'Draw!'; beep('lose'); vibrate(100); return true; }
+        return false;
+      }
+      function restart() {
+        for (let i = 0; i < 9; i++) board[i] = null;
+        current = 'X';
+        info.textContent = '';
+        render();
+      }
+      reset.addEventListener('click', restart);
+      reset.addEventListener('touchstart', (e) => { e.preventDefault(); restart(); });
+      render();
+      return () => {};
+    }
+
+    function initSnake(root, onHS) {
+      const cvs = document.createElement('canvas'); cvs.width = 320; cvs.height = 320; const ctx = cvs.getContext('2d');
+      const controls = document.createElement('div'); controls.className = 'controls';
+      const speedSelect = document.createElement('select');
+      ['Slow', 'Medium', 'Fast'].forEach((s, i) => {
+        const opt = document.createElement('option'); opt.value = 120 - i * 30; opt.textContent = s; speedSelect.appendChild(opt);
+      });
+      const reset = document.createElement('button'); reset.className = 'btn secondary'; reset.textContent = 'Restart';
+      ['Up', 'Left', 'Right', 'Down'].forEach(dir => {
+        const btn = document.createElement('button'); btn.className = 'btn control-btn'; btn.textContent = dir;
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleDir(dir.toLowerCase()); vibrate(20); });
+        controls.appendChild(btn);
+      });
+      root.append(cvs, speedSelect, controls, reset);
+      let snake = [{ x: 160, y: 160 }], food = { x: 80, y: 80 }, dx = 16, dy = 0, score = 0, loop, speed = 120;
+      function rnd() { return Math.floor(Math.random() * 20) * 16; }
+      function resetFood() { food = { x: rnd(), y: rnd() }; }
+      function hit(a) { return snake.slice(1).some(p => p.x === a.x && p.y === a.y); }
+      function draw() {
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+        ctx.fillStyle = 'red'; ctx.fillRect(food.x, food.y, 16, 16);
+        ctx.fillStyle = 'lime'; snake.forEach(p => ctx.fillRect(p.x, p.y, 16, 16));
+        ctx.fillStyle = 'white'; ctx.font = '16px system-ui'; ctx.fillText('Score: ' + score, 10, 20);
+      }
+      function step() {
+        const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+        snake.unshift(head);
+        if (head.x === food.x && head.y === food.y) {
+          score++; beep('win'); vibrate(50); resetFood();
+        } else { snake.pop(); }
+        if (head.x < 0 || head.y < 0 || head.x >= cvs.width || head.y >= cvs.height || hit(head)) {
+          clearInterval(loop); onHS(score); beep('lose'); vibrate(100);
+          return;
+        }
+        draw();
+      }
+      function handleDir(dir) {
+        if (dir === 'up' && dy === 0) { dx = 0; dy = -16; }
+        else if (dir === 'down' && dy === 0) { dx = 0; dy = 16; }
+        else if (dir === 'left' && dx === 0) { dx = -16; dy = 0; }
+        else if (dir === 'right' && dx === 0) { dx = 16; dy = 0; }
+        beep('move'); vibrate(20);
+      }
+      function resetGame() {
+        snake = [{ x: 160, y: 160 }]; food = { x: 80, y: 80 }; dx = 16; dy = 0; score = 0;
+        speed = Number(speedSelect.value); clearInterval(loop); loop = setInterval(step, speed); draw();
+      }
+      speedSelect.addEventListener('change', resetGame);
+      reset.addEventListener('click', resetGame);
+      reset.addEventListener('touchstart', (e) => { e.preventDefault(); resetGame(); });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') handleDir('up');
+        else if (e.key === 'ArrowDown') handleDir('down');
+        else if (e.key === 'ArrowLeft') handleDir('left');
+        else if (e.key === 'ArrowRight') handleDir('right');
+      });
+      let touchStartX = 0, touchStartY = 0;
+      cvs.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      });
+      cvs.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touchEndX = e.touches[0].clientX;
+        const touchEndY = e.touches[0].clientY;
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+          handleDir(dx > 0 ? 'right' : 'left');
+        } else if (Math.abs(dy) > 30) {
+          handleDir(dy > 0 ? 'down' : 'up');
+        }
+        touchStartX = touchEndX; touchStartY = touchEndY;
+      });
+      resetGame();
+      return () => { clearInterval(loop); window.removeEventListener('keydown'); };
+    }
+
+    function initGuess(root, onHS) {
+      const secret = Math.floor(Math.random() * 100) + 1; let tries = 0;
+      const inp = document.createElement('input'); inp.type = 'number'; inp.min = 1; inp.max = 100; inp.placeholder = '1-100'; inp.style.padding = '12px'; inp.style.borderRadius = '10px'; inp.style.width = '100%';
+      const btn = document.createElement('button'); btn.className = 'btn control-btn'; btn.textContent = 'Guess';
+      const out = document.createElement('p');
+      root.append(inp, btn, out);
+      const guess = () => {
+        const g = Number(inp.value); if (!g) return; tries++;
+        if (g === secret) { out.textContent = `Correct in ${tries} tries!`; beep('win'); vibrate(50); onHS(101 - tries); }
+        else { out.textContent = g < secret ? 'Too low!' : 'Too high!'; beep('click'); vibrate(20); }
+      };
+      btn.addEventListener('click', guess);
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); guess(); });
+      return () => {};
+    }
+
+    function initMemory(root, onHS) {
+      const symbols = ['🍎', '🍌', '🍇', '🍓', '🍒', '🥝', '🍍', '🥭'];
+      const cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+      const grid = document.createElement('div'); grid.className = 'memory';
+      const out = document.createElement('p');
+      root.append(grid, out);
+      let flipped = [], found = 0, clicks = 0;
+      cards.forEach((c, i) => {
+        const d = document.createElement('div'); d.className = 'mcard'; d.textContent = '?';
+        const flip = () => {
+          if (flipped.length === 2 || d.textContent !== '?') return;
+          d.style.transform = 'rotateY(180deg)';
+          setTimeout(() => { d.textContent = cards[i]; d.style.transform = 'rotateY(0deg)'; }, 200);
+          clicks++; flipped.push({ i, div: d });
+          if (flipped.length === 2) {
+            if (cards[flipped[0].i] === cards[flipped[1].i]) {
+              beep('win'); vibrate(50); found += 2; flipped = [];
+              if (found === cards.length) { out.textContent = `All matched in ${clicks} flips!`; onHS(-clicks); }
+            } else {
+              beep('lose'); vibrate(100);
+              setTimeout(() => {
+                flipped[0].div.style.transform = 'rotateY(180deg)';
+                flipped[1].div.style.transform = 'rotateY(180deg)';
+                setTimeout(() => {
+                  flipped[0].div.textContent = '?';
+                  flipped[1].div.textContent = '?';
+                  flipped[0].div.style.transform = 'rotateY(0deg)';
+                  flipped[1].div.style.transform = 'rotateY(0deg)';
+                  flipped = [];
+                }, 200);
+              }, 700);
+            }
+          }
+        };
+        d.addEventListener('click', flip);
+        d.addEventListener('touchstart', (e) => { e.preventDefault(); flip(); });
+        grid.appendChild(d);
+      });
+      return () => {};
+    }
+
+    function initReaction(root, onHS) {
+      const msg = document.createElement('h3'); msg.textContent = 'Tap Start, then tap when it turns GREEN';
+      const btn = document.createElement('button'); btn.className = 'btn control-btn'; btn.textContent = 'Start';
+      root.append(msg, btn);
+      let t1 = null, waiting = false;
+      const start = () => {
+        if (waiting) return;
+        waiting = true; btn.textContent = 'Wait...'; msg.textContent = '...';
+        const delay = 800 + Math.random() * 2200;
+        setTimeout(() => {
+          beep('win'); vibrate(50);
+          btn.style.background = 'green';
+          msg.textContent = 'TAP!';
+          t1 = performance.now();
+        }, delay);
+      };
+      btn.addEventListener('click', start);
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); start(); });
+      const react = () => {
+        if (!waiting || !t1) return;
+        const rt = Math.round(performance.now() - t1);
+        msg.textContent = `Reaction: ${rt} ms`;
+        btn.textContent = 'Start again';
+        btn.style.background = '';
+        waiting = false;
+        t1 = null;
+        onHS(-rt);
+        vibrate(20);
+      };
+      root.addEventListener('click', react);
+      root.addEventListener('touchstart', (e) => { e.preventDefault(); react(); });
+      return () => {};
+    }
+
+    function initMath(root, onHS) {
+      let score = 0, q = 0; const total = 10;
+      const p = document.createElement('p');
+      const inp = document.createElement('input'); inp.type = 'number'; inp.style.padding = '12px'; inp.style.borderRadius = '10px'; inp.style.width = '100%';
+      const btn = document.createElement('button'); btn.className = 'btn control-btn'; btn.textContent = 'Submit';
+      const meta = document.createElement('div'); meta.style.margin = '8px 0';
+      root.append(p, inp, btn, meta);
+      function next() {
+        if (q === total) {
+          p.textContent = `Done! Score: ${score}/${total}`;
+          onHS(score);
+          btn.disabled = true;
+          vibrate(50);
+          return;
+        }
+        q++;
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const ops = ['+', '-', '×'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        const ans = (op === '+') ? a + b : (op === '-') ? a - b : a * b;
+        p.dataset.ans = ans;
+        p.textContent = `Q${q}: ${a} ${op} ${b} = ?`;
+        inp.value = '';
+        meta.textContent = `Score: ${score}`;
+      }
+      const submit = () => {
+        const v = Number(inp.value); if (inp.value === '') return;
+        if (v == Number(p.dataset.ans)) { score++; beep('win'); vibrate(50); } else { beep('lose'); vibrate(100); }
+        next();
+      };
+      btn.addEventListener('click', submit);
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); submit(); });
+      next();
+      return () => {};
+    }
+
+    function initFlappy(root, onHS) {
+      const cvs = document.createElement('canvas'); cvs.width = 360; cvs.height = 480; const ctx = cvs.getContext('2d');
+      const status = document.createElement('div'); status.style.textAlign = 'center'; status.style.margin = '8px';
+      root.append(cvs, status);
+      let x = 80, y = 200, vy = 0, g = 0.5, jump = -8, pipes = [], frame = 0, alive = true, score = 0;
+      function addPipe() { const gap = 120, top = 60 + Math.random() * 220; pipes.push({ x: cvs.width, y: top, w: 52, gap }); }
+      function reset() {
+        x = 80; y = 200; vy = 0; pipes = []; frame = 0; alive = true; score = 0;
+        for (let i = 0; i < 3; i++) { addPipe(); pipes[i].x += i * 180; }
+        status.textContent = '';
+      }
+      function draw() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        ctx.fillStyle = '#4cc9f0'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+        ctx.fillStyle = '#2a9d8f'; pipes.forEach(p => { ctx.fillRect(p.x, 0, p.w, p.y); ctx.fillRect(p.x, p.y + p.gap, p.w, cvs.height); });
+        ctx.fillStyle = 'yellow'; ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'white'; ctx.font = '16px system-ui'; ctx.fillText('Score: ' + score, 10, 20);
+      }
+      function step() {
+        if (!alive) return;
+        frame++;
+        if (frame % 120 === 0) addPipe();
+        vy += g; y += vy;
+        pipes.forEach(p => { p.x -= 2; });
+        pipes = pipes.filter(p => p.x + p.w > -10);
+        for (const p of pipes) {
+          if (x + 12 > p.x && x - 12 < p.x + p.w) {
+            if (y - 12 < p.y || y + 12 > p.y + p.gap) {
+              alive = false; beep('lose'); vibrate(100); onHS(score); status.textContent = `Game Over! Score: ${score}. Tap to restart.`;
+            }
+          }
+          if (!p.passed && (p.x + p.w) < (x - 12)) { p.passed = true; score++; beep('win'); vibrate(50); }
+        }
+        if (y > cvs.height - 12 || y < 12) {
+          alive = false; beep('lose'); vibrate(100); onHS(score); status.textContent = `Game Over! Score: ${score}. Tap to restart.`;
+        }
+        draw();
+        if (alive) requestAnimationFrame(step);
+      }
+      function flap() {
+        vy = jump; beep('click'); vibrate(20);
+        if (!alive) { reset(); step(); }
+      }
+      cvs.addEventListener('click', flap);
+      cvs.addEventListener('touchstart', (e) => { e.preventDefault(); flap(); });
+      window.addEventListener('keydown', (e) => { if (e.code === 'Space') flap(); });
+      reset();
+      step();
+      return () => { cvs.removeEventListener('click'); cvs.removeEventListener('touchstart'); window.removeEventListener('keydown'); };
+    }
+
+    function init2048(root, onHS) {
+      const size = 4; let grid = Array.from({ length: size }, () => Array(size).fill(0));
+      const wrap = document.createElement('div'); wrap.style.display = 'inline-grid'; wrap.style.gridTemplateColumns = `repeat(${size}, 80px)`; wrap.style.gap = '8px';
+      const tiles = [];
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          const d = document.createElement('div'); d.style.width = '80px'; d.style.height = '80px';
+          d.style.borderRadius = '10px'; d.style.display = 'grid'; d.style.placeItems = 'center';
+          d.style.fontWeight = '700'; d.style.background = '#e5e7eb'; d.style.transition = 'transform .2s ease, background .2s ease';
+          tiles.push(d); wrap.appendChild(d);
+        }
+      }
+      const meta = document.createElement('p');
+      const reset = document.createElement('button'); reset.className = 'btn secondary'; reset.textContent = 'Restart';
+      root.append(wrap, meta, reset);
+      let score = 0;
+      function spawn() {
+        const empty = [];
+        for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (!grid[r][c]) empty.push([r, c]);
+        if (!empty.length) return;
+        const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+        grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+      }
+      function draw() {
+        for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+          const v = grid[r][c]; const d = tiles[r * size + c];
+          d.textContent = v || ''; d.style.background = v ? `hsl(${(Math.log2(v) % 12) * 30}, 70%, 70%)` : '#e5e7eb';
+          if (v) d.style.transform = 'scale(1.1)'; setTimeout(() => d.style.transform = 'scale(1)', 100);
+        }
+        meta.textContent = 'Score: ' + score;
+      }
+      function slide(row) {
+        row = row.filter(v => v);
+        for (let i = 0; i < row.length - 1; i++) {
+          if (row[i] === row[i + 1]) { row[i] *= 2; score += row[i] * 2; row[i + 1] = 0; }
+        }
+        return row.filter(v => v);
+      }
+      function move(dir) {
+        let moved = false;
+        if (dir === 'left' || dir === 'right') {
+          for (let r = 0; r < size; r++) {
+            let row = [...grid[r]]; if (dir === 'right') row = row.reverse();
+            row = slide(row); while (row.length < size) row.push(0);
+            if (dir === 'right') row = row.reverse();
+            const newRow = row; if (newRow.some((v, i) => v !== grid[r][i])) moved = true;
+            grid[r] = newRow;
+          }
+        } else {
+          for (let c = 0; c < size; c++) {
+            let col = []; for (let r = 0; r < size; r++) col.push(grid[r][c]);
+            col = (dir === 'down') ? col.reverse() : col;
+            col = slide(col); while (col.length < size) col.push(0);
+            if (dir === 'down') col = col.reverse();
+            for (let r = 0; r < size; r++) { if (grid[r][c] !== col[r]) moved = true; grid[r][c] = col[r]; }
+          }
+        }
+        if (moved) { spawn(); draw(); beep('move'); vibrate(20); if (checkOver()) { onHS(score); meta.textContent = `Game Over! Score: ${score}`; } }
+      }
+      function checkOver() {
+        for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (grid[r][c] === 0) return false;
+        for (let r = 0; r < size; r++) for (let c = 0; c < size - 1; c++) if (grid[r][c] === grid[r][c + 1]) return false;
+        for (let c = 0; c < size; c++) for (let r = 0; r < size - 1; r++) if (grid[r][c] === grid[r + 1][c]) return false;
+        return true;
+      }
+      function restart() { score = 0; grid = Array.from({ length: size }, () => Array(size).fill(0)); spawn(); spawn(); draw(); }
+      reset.addEventListener('click', restart);
+      reset.addEventListener('touchstart', (e) => { e.preventDefault(); restart(); });
+      window.addEventListener('keydown', (e) => {
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+          e.preventDefault();
+          move(e.key.replace('Arrow', '').toLowerCase());
+        }
+      });
+      let touchStartX = 0, touchStartY = 0;
+      wrap.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      });
+      wrap.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touchEndX = e.touches[0].clientX;
+        const touchEndY = e.touches[0].clientY;
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+          move(dx > 0 ? 'right' : 'left');
+        } else if (Math.abs(dy) > 30) {
+          move(dy > 0 ? 'down' : 'up');
+        }
+        touchStartX = touchEndX; touchStartY = touchEndY;
+      });
+      restart();
+      return () => { window.removeEventListener('keydown'); };
+    }
+
+    // About
+    $('#aboutBtn').onclick = () => {
+      alert(`Mini Game Hub — Pro\n\nAll games are built with vanilla HTML/CSS/JS and work offline.\nHigh scores are saved in your browser. Now with touch support and haptic feedback!`);
+    };
   </script>
 </body>
-</html>
+  </html>
