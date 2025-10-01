@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlanetSaver AI 3D</title>
+<title>PlanetSaver AI 3D Globe</title>
 <style>
-  body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #0a0a0a; color: #fff; }
-  #ui { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; }
-  .slider-container { margin-bottom: 15px; }
-  .label { font-weight: bold; margin-bottom: 5px; display:block; }
-  #feedback { margin-top: 10px; }
+  body { margin:0; overflow:hidden; font-family: Arial, sans-serif; background:#0a0a0a; color:#fff; }
+  #ui {
+    position:absolute; top:20px; left:20px; z-index:10; background: rgba(0,0,0,0.5);
+    padding:20px; border-radius:10px;
+  }
+  .slider-container { margin-bottom:15px; }
+  .label { font-weight:bold; margin-bottom:5px; display:block; }
+  #feedback { margin-top:10px; }
 </style>
 </head>
 <body>
@@ -33,7 +36,7 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-  // Scene setup
+  // Scene
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({antialias:true});
@@ -43,8 +46,8 @@
   // Globe
   const geometry = new THREE.SphereGeometry(5, 64, 64);
   const material = new THREE.MeshPhongMaterial({color:0x00ff00, shininess:10});
-  const earth = new THREE.Mesh(geometry, material);
-  scene.add(earth);
+  const globe = new THREE.Mesh(geometry, material);
+  scene.add(globe);
 
   // Lighting
   const light = new THREE.PointLight(0xffffff, 1);
@@ -53,7 +56,7 @@
   const ambient = new THREE.AmbientLight(0x404040);
   scene.add(ambient);
 
-  // Camera position
+  // Camera
   camera.position.z = 15;
 
   // Controls
@@ -65,15 +68,15 @@
   const water = document.getElementById('water');
   const feedback = document.getElementById('feedback');
 
-  function updatePlanet() {
+  function updateGlobe() {
     const co2Val = parseInt(co2.value);
     const defVal = parseInt(deforest.value);
     const waterVal = parseInt(water.value);
 
-    // Change planet color dynamically
+    // Planet color dynamically: greener = healthy, browner = stressed
     const green = Math.max(0, 255 - co2Val*1.5 - defVal*1.5);
     const blue = Math.max(50, 150 - waterVal);
-    earth.material.color.setRGB(0, green/255, blue/255);
+    globe.material.color.setRGB(0, green/255, blue/255);
 
     // Feedback
     if(co2Val>70||defVal>70||waterVal>70){
@@ -85,14 +88,14 @@
     }
   }
 
-  co2.addEventListener('input', updatePlanet);
-  deforest.addEventListener('input', updatePlanet);
-  water.addEventListener('input', updatePlanet);
+  co2.addEventListener('input', updateGlobe);
+  deforest.addEventListener('input', updateGlobe);
+  water.addEventListener('input', updateGlobe);
 
-  // Animation loop
+  // Animate
   function animate() {
     requestAnimationFrame(animate);
-    earth.rotation.y += 0.001; // slow rotation
+    globe.rotation.y += 0.001;
     renderer.render(scene, camera);
   }
   animate();
@@ -103,7 +106,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  updatePlanet(); // initial update
+  updateGlobe(); // initial
 </script>
 
 </body>
