@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlanetSaver AI 3D Globe</title>
+<title>PlanetSaver AI Globe</title>
 <style>
   body { margin:0; overflow:hidden; font-family: Arial, sans-serif; background:#0a0a0a; color:#fff; }
   #ui {
-    position:absolute; top:20px; left:20px; z-index:10; background: rgba(0,0,0,0.5);
-    padding:20px; border-radius:10px;
+    position:absolute; top:20px; left:20px; z-index:10; background: rgba(0,0,0,0.6);
+    padding:20px; border-radius:12px; max-width:250px;
   }
   .slider-container { margin-bottom:15px; }
   .label { font-weight:bold; margin-bottom:5px; display:block; }
-  #feedback { margin-top:10px; }
+  input[type=range] { width:100%; }
+  #feedback { margin-top:10px; font-weight:bold; }
 </style>
 </head>
 <body>
 
 <div id="ui">
+  <h2>🌍 Save Our Planet</h2>
   <div class="slider-container">
     <label class="label">CO₂ Emissions</label>
     <input type="range" id="co2" min="0" max="100" value="50">
@@ -39,30 +41,47 @@
   // Scene
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.z = 15;
+
   const renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Globe
-  const geometry = new THREE.SphereGeometry(5, 64, 64);
-  const material = new THREE.MeshPhongMaterial({color:0x00ff00, shininess:10});
-  const globe = new THREE.Mesh(geometry, material);
-  scene.add(globe);
-
-  // Lighting
-  const light = new THREE.PointLight(0xffffff, 1);
+  // Lights
+  const light = new THREE.DirectionalLight(0xffffff, 1);
   light.position.set(10,10,10);
   scene.add(light);
-  const ambient = new THREE.AmbientLight(0x404040);
+  const ambient = new THREE.AmbientLight(0x404040, 1.5);
   scene.add(ambient);
-
-  // Camera
-  camera.position.z = 15;
 
   // Controls
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.rotateSpeed = 0.5;
+  controls.zoomSpeed = 0.8;
 
-  // Sliders
+  // Globe
+  const textureLoader = new THREE.TextureLoader();
+  const earthTexture = textureLoader.load('land_ocean_ice_cloud_2048.jpg'); // relative path
+
+  const globeGeometry = new THREE.SphereGeometry(5, 64, 64);
+  const globeMaterial = new THREE.MeshPhongMaterial({map: earthTexture});
+  const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+  scene.add(globe);
+
+  // Atmospheric glow
+  const atmosphereGeometry = new THREE.SphereGeometry(5.1, 64, 64);
+  const atmosphereMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00aaff,
+    side: THREE.BackSide,
+    transparent: true,
+    opacity: 0.1
+  });
+  const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+  scene.add(atmosphere);
+
+  // UI Elements
   const co2 = document.getElementById('co2');
   const deforest = document.getElementById('deforest');
   const water = document.getElementById('water');
@@ -73,18 +92,19 @@
     const defVal = parseInt(deforest.value);
     const waterVal = parseInt(water.value);
 
-    // Planet color dynamically: greener = healthy, browner = stressed
-    const green = Math.max(0, 255 - co2Val*1.5 - defVal*1.5);
-    const blue = Math.max(50, 150 - waterVal);
-    globe.material.color.setRGB(0, green/255, blue/255);
+    // subtle glow based on human impact
+    globe.material.emissive.setRGB(co2Val/100, defVal/100, waterVal/100);
 
-    // Feedback
-    if(co2Val>70||defVal>70||waterVal>70){
-      feedback.textContent = "⚠️ High impact! Planet under stress!";
-    } else if(co2Val>40||defVal>40||waterVal>40){
-      feedback.textContent = "⚠️ Moderate impact. Reduce human activity!";
+    // Feedback messages
+    if(co2Val>70 || defVal>70 || waterVal>70){
+      feedback.textContent = "⚠️ High Impact! 🌡️ Planet is stressed!";
+      feedback.style.color = "#ff4444";
+    } else if(co2Val>40 || defVal>40 || waterVal>40){
+      feedback.textContent = "⚠️ Moderate Impact! 🌱 Act now!";
+      feedback.style.color = "#ffbb33";
     } else {
-      feedback.textContent = "🌱 Low impact. Planet is healthier!";
+      feedback.textContent = "🌎 Low Impact! Great job, Earth is happy!";
+      feedback.style.color = "#33ff77";
     }
   }
 
@@ -92,7 +112,7 @@
   deforest.addEventListener('input', updateGlobe);
   water.addEventListener('input', updateGlobe);
 
-  // Animate
+  // Animation
   function animate() {
     requestAnimationFrame(animate);
     globe.rotation.y += 0.001;
@@ -108,6 +128,5 @@
 
   updateGlobe(); // initial
 </script>
-
 </body>
 </html>
