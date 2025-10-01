@@ -3,141 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkillQuest AI - Gamified Learning Universe</title>
+<title>PlanetSaver AI 3D</title>
 <style>
-    body {
-        margin: 0;
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(135deg, #1f1c2c, #928dab);
-        color: #fff;
-        overflow-x: hidden;
-    }
-    header {
-        text-align: center;
-        padding: 2rem 1rem;
-        background: rgba(0,0,0,0.4);
-    }
-    header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        color: #ffdd59;
-    }
-    header p {
-        font-size: 1.1rem;
-        color: #ddd;
-    }
-    #world-map {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 2rem auto;
-        max-width: 900px;
-    }
-    .zone {
-        width: 180px;
-        height: 180px;
-        margin: 1rem;
-        background: rgba(255,255,255,0.1);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        font-weight: bold;
-    }
-    .zone:hover {
-        transform: scale(1.1);
-        background: rgba(255,255,255,0.2);
-        box-shadow: 0 0 20px #ffdd59;
-    }
-    .zone span {
-        pointer-events: none;
-    }
-    #challenge-box {
-        max-width: 700px;
-        margin: 2rem auto;
-        background: rgba(0,0,0,0.5);
-        padding: 2rem;
-        border-radius: 15px;
-        display: none;
-        text-align: center;
-        box-shadow: 0 0 30px #ffdd59;
-    }
-    #points {
-        position: fixed;
-        top: 1rem;
-        right: 2rem;
-        font-size: 1.2rem;
-        background: rgba(0,0,0,0.5);
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        color: #ffdd59;
-        font-weight: bold;
-    }
-    button {
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        background: #ffdd59;
-        color: #000;
-        font-weight: bold;
-        transition: all 0.3s ease;
-    }
-    button:hover {
-        background: #ffc107;
-    }
+  body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #0a0a0a; color: #fff; }
+  #ui { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; }
+  .slider-container { margin-bottom: 15px; }
+  .label { font-weight: bold; margin-bottom: 5px; display:block; }
+  #feedback { margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<div id="points">Points: 0</div>
-
-<header>
-    <h1>SkillQuest AI</h1>
-    <p>Explore zones, solve challenges, and level up your skills!</p>
-</header>
-
-<div id="world-map">
-    <div class="zone" data-challenge="Learn to Code: Solve a mini coding puzzle!"><span>Code Zone</span></div>
-    <div class="zone" data-challenge="Language Adventure: Translate sentences using AI hints."><span>Language Zone</span></div>
-    <div class="zone" data-challenge="Health Challenge: Plan a balanced meal for a day."><span>Health Zone</span></div>
-    <div class="zone" data-challenge="Climate Quest: Reduce carbon footprint in a simulation."><span>Climate Zone</span></div>
-    <div class="zone" data-challenge="Math Arena: Solve AI-generated puzzles quickly."><span>Math Zone</span></div>
+<div id="ui">
+  <div class="slider-container">
+    <label class="label">CO₂ Emissions</label>
+    <input type="range" id="co2" min="0" max="100" value="50">
+  </div>
+  <div class="slider-container">
+    <label class="label">Deforestation</label>
+    <input type="range" id="deforest" min="0" max="100" value="50">
+  </div>
+  <div class="slider-container">
+    <label class="label">Water Usage</label>
+    <input type="range" id="water" min="0" max="100" value="50">
+  </div>
+  <div id="feedback">Adjust the sliders to see impact!</div>
 </div>
 
-<div id="challenge-box">
-    <p id="challenge-text"></p>
-    <button id="complete-btn">Complete Challenge</button>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-    const zones = document.querySelectorAll('.zone');
-    const challengeBox = document.getElementById('challenge-box');
-    const challengeText = document.getElementById('challenge-text');
-    const completeBtn = document.getElementById('complete-btn');
-    const pointsDisplay = document.getElementById('points');
-    let points = 0;
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
-    zones.forEach(zone => {
-        zone.addEventListener('click', () => {
-            const challenge = zone.dataset.challenge;
-            challengeText.textContent = challenge;
-            challengeBox.style.display = 'block';
-        });
-    });
+  // Globe
+  const geometry = new THREE.SphereGeometry(5, 64, 64);
+  const material = new THREE.MeshPhongMaterial({color:0x00ff00, shininess:10});
+  const earth = new THREE.Mesh(geometry, material);
+  scene.add(earth);
 
-    completeBtn.addEventListener('click', () => {
-        points += 10;
-        pointsDisplay.textContent = `Points: ${points}`;
-        challengeBox.style.display = 'none';
-        alert('Challenge Completed! +10 Points');
-    });
+  // Lighting
+  const light = new THREE.PointLight(0xffffff, 1);
+  light.position.set(10,10,10);
+  scene.add(light);
+  const ambient = new THREE.AmbientLight(0x404040);
+  scene.add(ambient);
+
+  // Camera position
+  camera.position.z = 15;
+
+  // Controls
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  // Sliders
+  const co2 = document.getElementById('co2');
+  const deforest = document.getElementById('deforest');
+  const water = document.getElementById('water');
+  const feedback = document.getElementById('feedback');
+
+  function updatePlanet() {
+    const co2Val = parseInt(co2.value);
+    const defVal = parseInt(deforest.value);
+    const waterVal = parseInt(water.value);
+
+    // Change planet color dynamically
+    const green = Math.max(0, 255 - co2Val*1.5 - defVal*1.5);
+    const blue = Math.max(50, 150 - waterVal);
+    earth.material.color.setRGB(0, green/255, blue/255);
+
+    // Feedback
+    if(co2Val>70||defVal>70||waterVal>70){
+      feedback.textContent = "⚠️ High impact! Planet under stress!";
+    } else if(co2Val>40||defVal>40||waterVal>40){
+      feedback.textContent = "⚠️ Moderate impact. Reduce human activity!";
+    } else {
+      feedback.textContent = "🌱 Low impact. Planet is healthier!";
+    }
+  }
+
+  co2.addEventListener('input', updatePlanet);
+  deforest.addEventListener('input', updatePlanet);
+  water.addEventListener('input', updatePlanet);
+
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+    earth.rotation.y += 0.001; // slow rotation
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  updatePlanet(); // initial update
 </script>
 
 </body>
