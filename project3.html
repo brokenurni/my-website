@@ -63,8 +63,7 @@
 
   // Globe
   const textureLoader = new THREE.TextureLoader();
-  const earthTexture = textureLoader.load('land_ocean_ice_cloud_2048.jpg'); // relative path
-
+  const earthTexture = textureLoader.load('https://rawcdn.githack.com/mrdoob/three.js/dev/examples/textures/land_ocean_ice_cloud_2048.jpg');
   const globeGeometry = new THREE.SphereGeometry(5, 64, 64);
   const globeMaterial = new THREE.MeshPhongMaterial({map: earthTexture});
   const globe = new THREE.Mesh(globeGeometry, globeMaterial);
