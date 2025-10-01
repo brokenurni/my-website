@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Motivator — Project 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080a;
+    --card:#0e1012;
+    --muted:#9adfe9;
+    --accent:#00f0ff;
+    --glass: rgba(255,255,255,0.03);
+    --danger: #ff6b6b;
+    --success: #7cffb2;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, #041018 0%, transparent 10%),
+                radial-gradient(900px 400px at 90% 90%, #0b0810 0%, transparent 10%),
+                var(--bg);
+    color:#e6f7fb;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+  }
+
+  .container{
+    width:100%;
+    max-width:980px;
+    border-radius:16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:0;
+  }
+
+  /* LEFT PANEL: info / controls */
+  .left {
+    padding:28px;
+    background: linear-gradient(180deg, rgba(0,16,22,0.6), rgba(0,8,12,0.65));
+    border-right: 1px solid rgba(0,255,255,0.04);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .logo {
+    font-family: "Orbitron", sans-serif;
+    color:var(--accent);
+    font-size:20px;
+    letter-spacing:1px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .logo .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:linear-gradient(90deg,#00f0ff,#5df4ff);
+    box-shadow:0 0 12px rgba(0,240,255,0.5);
+  }
+  .title{
+    font-size:20px;color:#bff9ff;margin-top:6px;
+  }
+  .subtitle{
+    font-size:13px;color:var(--muted);line-height:1.4;
+  }
+
+  .controls {
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  button.btn {
+    background:var(--glass);
+    border:1px solid rgba(0,255,255,0.06);
+    color:var(--accent);
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    backdrop-filter: blur(6px);
+  }
+  button.btn:hover{transform:translateY(-3px)}
+  .small{
+    padding:6px 8px;font-size:13px;border-radius:8px;
+  }
+
+  .mood-row{
+    display:flex;gap:10px;align-items:center;margin-top:6px;
+  }
+  .mood-row input[type=range]{
+    -webkit-appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,#00f0ff,#3877ff);flex:1;
+    outline:none;
+  }
+  .mood-label{font-size:12px;color:var(--muted);width:68px;text-align:right;margin-right:8px}
+
+  .actions{
+    margin-top:auto;
+    display:flex;
+    gap:8px;
+    flex-direction:column;
+  }
+  .action-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));
+    border-radius:12px;padding:12px;border:1px solid rgba(0,255,255,0.04);
+  }
+  .affirmation{
+    font-style:italic;color:#c9ffff;
+    margin-bottom:8px;
+  }
+  .resources a {color:var(--accent);text-decoration:none}
+  .resources a:hover{text-decoration:underline}
+
+  .danger {
+    display:flex;gap:8px;align-items:center;color:var(--danger);font-weight:700;
+  }
+
+  /* RIGHT PANEL: chat area */
+  .right{
+    display:flex;flex-direction:column;height:600px;
+  }
+  .chat-header{
+    padding:20px;border-bottom:1px solid rgba(0,255,255,0.03);display:flex;align-items:center;gap:12px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.06), transparent);
+  }
+  .bot-avatar{
+    width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#062833,#003a3c);
+    border:1px solid rgba(0,240,255,0.08);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 18px rgba(0,200,255,0.06), 0 0 18px rgba(0,240,255,0.04) inset;
+  }
+  .bot-avatar .eye{
+    width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px rgba(0,240,255,0.6)
+  }
+  .chat-title{font-weight:700}
+  .chat-sub{font-size:12px;color:var(--muted)}
+
+  .messages {
+    padding:18px;
+    flex:1;
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    background-image:
+      radial-gradient(600px 120px at 5% 95%, rgba(0,240,255,0.02), transparent 5%),
+      radial-gradient(400px 100px at 95% 10%, rgba(0,200,255,0.02), transparent 4%);
+  }
+
+  .msg {
+    max-width:72%;
+    padding:12px 14px;
+    border-radius:12px;
+    line-height:1.4;
+    font-size:15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  }
+  .user {
+    align-self:flex-end;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    color:#fff;
+    border-bottom-right-radius:4px;
+  }
+  .bot {
+    align-self:flex-start;
+    background: linear-gradient(180deg, rgba(0,255,255,0.04), rgba(0,255,255,0.02));
+    border:1px solid rgba(0,255,255,0.06);
+    color:#00161a;
+    border-bottom-left-radius:4px;
+  }
+  .meta{
+    font-size:11px;color:var(--muted);margin-top:6px;
+  }
+
+  .composer{
+    padding:14px;border-top:1px solid rgba(0,255,255,0.03);display:flex;gap:10px;align-items:center;background:linear-gradient(0deg, rgba(0,0,0,0.04), transparent);
+  }
+  .composer input[type="text"]{
+    flex:1;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+    background:transparent;color:inherit;outline:none;font-size:15px;
+  }
+  .icon-btn{background:transparent;border:none;color:var(--accent);cursor:pointer;font-size:18px}
+  .hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+
+  /* responsive */
+  @media(max-width:900px){
+    .container{grid-template-columns:1fr;max-width:740px}
+    .left{order:2}
+    .right{order:1;height:640px}
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Motivational chatbot">
+    <div class="left" aria-hidden="false">
+      <div>
+        <div class="logo"><span class="dot" aria-hidden="true"></span>Motivator AI</div>
+        <div class="title">Project 2 — Mood Buddy</div>
+        <div class="subtitle">A small companion that listens, comforts, and offers quick tools when you're feeling low.</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn small" id="newSessionBtn" title="Clear chat and start fresh">New Session</button>
+        <button class="btn small" id="exportBtn" title="Export chat as text">Export Chat</button>
+        <button class="btn small" id="backBtn" title="Back to hub">Back to Hub</button>
+        <button class="btn small" id="speakToggle" title="Toggle voice replies">Voice: Off</button>
+      </div>
+
+      <div class="mood-block">
+        <div style="font-size:13px;color:var(--muted)">How are you feeling right now?</div>
+        <div class="mood-row" style="margin-top:8px">
+          <div class="mood-label">Bad</div>
+          <input type="range" id="moodSlider" min="0" max="10" value="5" aria-label="Mood slider">
+          <div class="mood-label" style="text-align:left">Good</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="action-card">
+          <div class="affirmation" id="affirmation">"You are stronger than you think." — loading...</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" id="affirmBtn">New Affirmation</button>
+            <button class="btn" id="breathBtn">Start 4-4-4 Breathing</button>
+            <button class="btn" id="tinyTaskBtn">Give me a tiny task</button>
+          </div>
+        </div>
+
+        <div class="action-card resources">
+          <div style="font-weight:700;margin-bottom:6px">Quick resources</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
+            If you feel overwhelmed, try a breathing exercise or a short walk. If you are in immediate danger, seek help now.
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="#" id="selfHelpBtn" class="btn small">Self-help tips</a>
+            <a href="#" id="helplinesBtn" class="btn small">Find hotlines</a>
+            <a href="#" id="breathingInfo" class="btn small">Breathing guide</a>
+          </div>
+        </div>
+
+        <div class="action-card">
+          <div style="font-weight:700">Safety</div>
+          <div class="hint" style="margin-top:8px">
+            If you're thinking about harming yourself, press the button below to get urgent resources.
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn" id="urgentBtn" style="background:linear-gradient(90deg,#ff7272,#ff5f5f);border:none">I need urgent help</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="right" role="region" aria-label="chat area">
+      <div class="chat-header">
+        <div class="bot-avatar" aria-hidden="true"><div class="eye"></div></div>
+        <div>
+          <div class="chat-title">Mood Buddy</div>
+          <div class="chat-sub">Say something — I'll listen. (Examples: "I'm tired", "I feel lonely", "I want motivation")</div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite"></div>
+
+      <div class="composer" role="form" aria-label="Message composer">
+        <input type="text" id="input" placeholder="Type how you feel... (press Enter to send)" autocomplete="off" />
+        <button class="icon-btn" id="sendBtn" title="Send">➤</button>
+      </div>
+      <div class="hint" id="hint">Tip: Try "I feel anxious" or "I can't concentrate".</div>
+    </div>
+  </div>
+
+<script>
+/* ======== Data ======== */
+const AFFIRMATIONS = [
+  "You are worthy of kindness and good things.",
+  "Small steps still move you forward.",
+  "You are not your mistakes — you are learning.",
+  "You've made it through hard days before; you can again.",
+  "Permission to rest is also progress.",
+  "You are stronger than you feel right now."
+];
+
+const QUOTES = [
+  "The journey of a thousand miles begins with one step. — Lao Tzu",
+  "Do what you can, with what you have, where you are. — Theodore Roosevelt",
+  "Keep going. Everything you need will come to you at the perfect time.",
+  "You are allowed to be both a masterpiece and a work in progress at the same time."
+];
+
+const BOT_BASES = {
+  empathic: [
+    "I'm sorry you're feeling that way. Do you want to tell me more?",
+    "That sounds tough. I'm here with you — what helps you usually?",
+    "Thanks for sharing. It's brave to say how you feel."
+  ],
+  suggestions: [
+    "Try a 4-4-4 breathing for one minute: breathe in 4s — hold 4s — out 4s. Want me to guide you?",
+    "A tiny task: drink a glass of water or open a window for a breath of air.",
+    "Write one small thing you're grateful for right now, even if it's tiny."
+  ],
+  cheer: [
+    "You have done hard things before and you can do them again.",
+    "Let's focus on small wins — what's one tiny thing you can do in 5 minutes?"
+  ],
+  crisisSafe: [
+    "I'm really concerned about your safety. If you're in immediate danger, please call emergency services right now.",
+    "If you are thinking about harming yourself, contact a trusted person nearby or a crisis hotline. You're not alone."
+  ]
+};
+
+/* urgent keywords for crisis detection */
+const CRISIS_KEYWORDS = [
+  "suicide","kill myself","end my life","i want to die","hurt myself","self harm","worthless","cant go on","give up"
+];
+
+/* other mood keywords */
+const KEYWORDS = {
+  sad:["sad","depress","depressed","unhappy","down","lonely"],
+  anxious:["anxious","anxiety","panic","nervous","worried","overwhelmed","stressed"],
+  tired:["tired","exhaust","sleep","fatigue"],
+  angry:["angry","mad","furious","irritated"],
+  bored:["bored","boredom"],
+  happy:["happy","good","great","fine","well","okay"]
+};
+
+/* messages history key localStorage */
+const STORAGE_KEY = "motivator_chat_history_v1";
+
+/* ======== UI refs ======== */
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const newSessionBtn = document.getElementById('newSessionBtn');
+const exportBtn = document.getElementById('exportBtn');
+const backBtn = document.getElementById('backBtn');
+const speakToggle = document.getElementById('speakToggle');
+const affirmationEl = document.getElementById('affirmation');
+const affirmBtn = document.getElementById('affirmBtn');
+const breathBtn = document.getElementById('breathBtn');
+const tinyTaskBtn = document.getElementById('tinyTaskBtn');
+const urgentBtn = document.getElementById('urgentBtn');
+const moodSlider = document.getElementById('moodSlider');
+const selfHelpBtn = document.getElementById('selfHelpBtn');
+const helplinesBtn = document.getElementById('helplinesBtn');
+const breathingInfo = document.getElementById('breathingInfo');
+
+/* speech state */
+let voiceEnabled = false;
+
+/* ======== Initialization ======== */
+function init() {
+  // load affirmation & quote
+  refreshAffirmation();
+  loadHistory();
+  // first greeting from bot
+  if (getHistory().length === 0) {
+    botReply("Hi — I'm Mood Buddy. Tell me how you're feeling and I'll try to support you.");
+  } else {
+    // keep history visible
+    scrollToBottom();
+  }
+  bindEvents();
+}
+init();
+
+/* ======== Events ======== */
+function bindEvents(){
+  sendBtn.onclick = sendFromInput;
+  inputEl.addEventListener('keydown', (e)=> { if(e.key === 'Enter') sendFromInput(); });
+  newSessionBtn.onclick = clearSession;
+  exportBtn.onclick = exportChat;
+  backBtn.onclick = ()=> { window.location.href = 'index.html'; }
+  speakToggle.onclick = toggleVoice;
+  affirmBtn.onclick = refreshAffirmation;
+  breathBtn.onclick = startBreathingGuide;
+  tinyTaskBtn.onclick = giveTinyTask;
+  urgentBtn.onclick = showUrgentResources;
+  moodSlider.oninput = ()=> { /* visual feedback maybe later */ };
+  selfHelpBtn.onclick = (e)=>{ e.preventDefault(); showSelfHelp(); };
+  helplinesBtn.onclick = (e)=>{ e.preventDefault(); showHotlines(); };
+  breathingInfo.onclick = (e)=>{ e.preventDefault(); showBreathingInfo(); };
+}
+
+/* ======== Chat storage ======== */
+function getHistory(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ return []; }
+}
+function saveMessage(role, text){
+  const h = getHistory();
+  h.push({role, text, time:Date.now()});
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); } catch(e){}
+}
+function loadHistory(){
+  const h = getHistory();
+  h.forEach(item => {
+    appendMessage(item.role, item.text, false);
+  });
+}
+
+/* ======== Message UI ======== */
+function appendMessage(role, text, save=true){
+  const div = document.createElement('div');
+  div.className = 'msg '+(role==='user'?'user':'bot');
+  div.innerHTML = `<div class="content">${escapeHtml(text)}</div><div class="meta">${role==='user'?'You':'Mood Buddy'}</div>`;
+  messagesEl.appendChild(div);
+  scrollToBottom();
+  if(save) saveMessage(role, text);
+}
+function scrollToBottom(){ messagesEl.scrollTop = messagesEl.scrollHeight; }
+function escapeHtml(unsafe){ return unsafe.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ======== Sending flow ======== */
+function sendFromInput(){
+  const text = inputEl.value.trim();
+  if(!text) return;
+  appendMessage('user', text);
+  inputEl.value = '';
+  processUserText(text);
+}
+
+/* ======== Bot logic ======== */
+function processUserText(text){
+  const lower = text.toLowerCase();
+
+  // crisis detection
+  if (CRISIS_KEYWORDS.some(k => lower.includes(k))) {
+    // store and immediate urgent flow
+    saveMessage('user', text);
+    botReply(BOT_BASES.crisisSafe[0]);
+    setTimeout(()=> botReply(BOT_BASES.crisisSafe[1]), 900);
+    setTimeout(()=> showHotlines(), 1400);
+    return;
+  }
+
+  // keyword based mood detection
+  let matchedMood = null;
+  for(const [m, arr] of Object.entries(KEYWORDS)){
+    for(const kw of arr){
+      if (lower.includes(kw)) { matchedMood = m; break; }
+    }
+    if(matchedMood) break;
+  }
+
+  // craft response
+  if(matchedMood === 'sad' || matchedMood === 'lonely'){
+    botReply(randomPick(BOT_BASES.empathic));
+    setTimeout(()=> botReply(randomPick(BOT_BASES.suggestions)), 900);
+  } else if(matchedMood === 'anxious'){
+    botReply("I hear your anxiety — that's heavy. Want a short guided breathing exercise now?");
+    // offer breathing quick button
+    offerQuickAction("Start breathing", startBreathingGuide);
+  } else if(matchedMood === 'tired'){
+    botReply("Feeling drained can make everything harder. A tiny rest or short walk may help. Would you like a micro-task to ease back in?");
+    offerQuickAction("Tiny task", giveTinyTask);
+  } else if(matchedMood === 'angry'){
+    botReply("Anger is valid. Try 30 seconds of physical release (stretch or stomp) or write down what's bothering you. Want a tip?");
+    setTimeout(()=> botReply("If you'd like, we can try a grounding exercise together."), 900);
+  } else if(matchedMood === 'bored'){
+    botReply("Boredom can be a signal — do you want a quick creative prompt or mini-task?");
+    offerQuickAction("Creative prompt", ()=> botReply("Draw a tiny doodle of your current mood, or write one sentence about your day."));
+  } else if(matchedMood === 'happy'){
+    botReply("That's great to hear! Want to celebrate with a quick affirmation or save this mood?");
+    offerQuickAction("Save mood", ()=> { botReply("Saved — nice!"); });
+  } else {
+    // generic empathetic flow with suggestion
+    botReply(randomPick(BOT_BASES.empathic));
+    setTimeout(()=> botReply(randomPick(BOT_BASES.suggestions)), 900);
+  }
+}
+
+/* append a bot reply with simulated typing */
+function botReply(text){
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = `<div class="content">•••</div><div class="meta">Mood Buddy</div>`;
+  messagesEl.appendChild(typing);
+  scrollToBottom();
+
+  const delay = 700 + Math.min(1400, text.length * 10);
+  setTimeout(()=>{
+    typing.remove();
+    appendMessage('bot', text);
+    if(voiceEnabled) speakText(text);
+  }, delay);
+}
+
+/* ======== Aux utilities ======== */
+function randomPick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function offerQuickAction(label, fn){
+  // create a small inline bot message with a button
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg bot';
+  wrapper.style.maxWidth = '60%';
+  const btn = document.createElement('button');
+  btn.className = 'btn small';
+  btn.textContent = label;
+  btn.onclick = ()=> { fn(); btn.disabled = true; btn.textContent = 'Done'; };
+  wrapper.innerHTML = `<div style="margin-bottom:8px;font-size:14px">Quick action:</div>`;
+  wrapper.appendChild(btn);
+  const meta = document.createElement('div'); meta.className='meta'; meta.textContent='Mood Buddy';
+  wrapper.appendChild(meta);
+  messagesEl.appendChild(wrapper);
+  scrollToBottom();
+  saveMessage('bot', `[quick action offered: ${label}]`);
+}
+
+/* ======== Affirmation / tiny tasks / breathing ======== */
+function refreshAffirmation(){
+  const a = randomPick(AFFIRMATIONS);
+  affirmationEl.textContent = `"${a}"`;
+}
+
+function giveTinyTask(){
+  const tasks = [
+    "Stand up and stretch for 30 seconds.",
+    "Drink a glass of water slowly.",
+    "Open a window and take 3 deep breaths.",
+    "Write one sentence about something that went okay today.",
+    "Tidy a single surface (desk, shelf) for 2 minutes."
+  ];
+  botReply("Here's a tiny task: " + randomPick(tasks));
+}
+
+function startBreathingGuide(){
+  // simple 4-4-4 guided breathing
+  botReply("Let's do 4-4-4 breathing for about 6 rounds. Follow the prompts below.");
+  let rounds = 6;
+  let i = 0;
+  function step(){
+    if(i >= rounds){ botReply("Great — how do you feel now?"); return; }
+    botReply("Breathe in (4) — ⬆️");
+    setTimeout(()=> {
+      botReply("Hold (4) — ✋");
+      setTimeout(()=> {
+        botReply("Breathe out (4) — ⬇️");
+        i++;
+        setTimeout(step, 900);
+      }, 4000);
+    }, 10);
+  }
+  step();
+}
+
+/* ======== Export / Clear session / Urgent resources ======== */
+function exportChat(){
+  const h = getHistory();
+  const txt = h.map(m => `${m.role.toUpperCase()} [${new Date(m.time).toLocaleString()}]: ${m.text}`).join("\n\n");
+  const blob = new Blob([txt], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'mood-buddy-chat.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function clearSession(){
+  if(!confirm("Clear the chat history and start a new session?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  messagesEl.innerHTML = '';
+  botReply("Session cleared. I'm here whenever you want to talk.");
+}
+
+/* ======== Voice ======== */
+function toggleVoice(){
+  voiceEnabled = !voiceEnabled;
+  speakToggle.textContent = "Voice: " + (voiceEnabled ? 'On' : 'Off');
+}
+function speakText(text){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 1;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+/* ======== Pages / Resources (local client flow) ======== */
+function showUrgentResources(){
+  appendMessage('bot', "If you're in immediate danger, call emergency services now. Here are resources you can contact:");
+  setTimeout(()=> {
+    appendMessage('bot', "• Local emergency number (call when in danger)\n• Your nearest hospital or trusted person.\n• International helplines: https://www.opencounseling.com/suicide-hotlines (please open in a new tab).");
+    // We deliberately do not provide instructions for self-harm and instead show help.
+  }, 800);
+}
+
+function showHotlines(){
+  // show a short helpful block
+  appendMessage('bot', "If you're struggling, please consider contacting local hotlines or an online chat. If possible, tell someone you trust that you're having a hard time.");
+  appendMessage('bot', "Examples:\n• In the US: 988 (Suicide & Crisis Lifeline)\n• In the UK: Samaritans 116 123\nIf outside those regions, search 'suicide hotlines + your country' or visit official health sites.");
+}
+
+function showSelfHelp(){
+  appendMessage('bot', "Self-help tips:\n• Grounding: name 5 things you see, 4 things you can touch, 3 things you hear.\n• Short walk: 5 minutes outside can shift perspective.\n• Distraction: a 5-minute game, playlist, or simple drawing.");
+}
+
+function showBreathingInfo(){
+  appendMessage('bot', "Breathing guide: breathe in slowly for 4 secs, hold 4 secs, exhale 4 secs. Repeat until calmer. You can try the guided breathing button.");
+}
+
+/* ======== Small UX tweaks ======== */
+// update affirmation periodically
+setInterval(refreshAffirmation, 60 * 1000);
+
+/* ======== Accessibility: announce new bot msgs (aria-live handled by container) ======== */
+
+/* Prevent autocomplete on mobile from hijacking Enter */
+inputEl.setAttribute('autocorrect','off');
+inputEl.setAttribute('autocapitalize','sentences');
+
+</script>
+</body>
+</html>
