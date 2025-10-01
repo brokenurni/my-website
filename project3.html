@@ -61,9 +61,10 @@
   controls.rotateSpeed = 0.5;
   controls.zoomSpeed = 0.8;
 
-  // Globe
+  // Globe (CORS-friendly URL)
   const textureLoader = new THREE.TextureLoader();
-  const earthTexture = textureLoader.load('https://rawcdn.githack.com/mrdoob/three.js/dev/examples/textures/land_ocean_ice_cloud_2048.jpg');
+  const earthTexture = textureLoader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/textures/land_ocean_ice_cloud_2048.jpg');
+
   const globeGeometry = new THREE.SphereGeometry(5, 64, 64);
   const globeMaterial = new THREE.MeshPhongMaterial({map: earthTexture});
   const globe = new THREE.Mesh(globeGeometry, globeMaterial);
