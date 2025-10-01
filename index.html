@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kzzal’s Project Hub</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: radial-gradient(circle at top, #0d0d0d, #000);
+      color: #e0e0e0;
+      font-family: 'Roboto Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: #00ffff;
+      text-shadow: 0 0 15px #00ffff;
+      margin-bottom: 0.5rem;
+      animation: glow 3s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ffff; }
+      to { text-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff; }
+    }
+    p {
+      max-width: 600px;
+      margin: 0.5rem auto;
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+    .projects {
+      margin: 3rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      width: 80%;
+      max-width: 800px;
+    }
+    .project {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 2rem 1rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #00ffff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      transition: 0.3s;
+      box-shadow: 0 0 15px rgba(0,255,255,0.1);
+    }
+    .project:hover {
+      background: rgba(0, 255, 255, 0.1);
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    }
+    .quote {
+      margin: 2rem auto;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: #9efaff;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    footer a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Welcome to Kzzal’s Project Hub</h1>
+  <p>I’m a passionate developer exploring creative web projects.</p>
+  <p>👇 Choose a project below to explore 👇</p>
+
+  <div class="projects">
+    <a href="project1.html" class="project">Project 1</a>
+    <a href="project2.html" class="project">Project 2</a>
+    <a href="project3.html" class="project">Project 3</a>
+  </div>
+
+  <div class="quote" id="quote">Loading quote...</div>
+
+  <footer>
+    Made with ❤️ by Kzzal — <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+  </footer>
+
+  <script>
+    const quotes = [
+      "“Code is like humor. When you have to explain it, it’s bad.” – Cory House",
+      "“First, solve the problem. Then, write the code.” – John Johnson",
+      "“Programs must be written for people to read.” – Harold Abelson",
+      "“Talk is cheap. Show me the code.” – Linus Torvalds",
+      "“Simplicity is the soul of efficiency.” – Austin Freeman",
+      "“The best error message is the one that never shows up.” – Thomas Fuchs"
+    ];
+    document.getElementById("quote").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+  </script>
+</body>
+</html>
