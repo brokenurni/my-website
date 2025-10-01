@@ -1,0 +1,408 @@
+/* ===== Root & Reset ===== */
+:root {
+  --bg1: #0ea5e9;
+  --bg2: #22d3ee;
+  --surface: #ffffffee;
+  --surface-2: #fafafacc;
+  --surface-dark: #1f2937ee;
+  --surface-2-dark: #0b1220cc;
+  --text: #0f172a;
+  --muted: #334155;
+  --text-d: #e5e7eb;
+  --muted-d: #cbd5e1;
+  --accent: #10b981;
+  --accent-2: #f59e0b;
+  --danger: #ef4444;
+  --radius: 16px;
+  --shadow: 0 10px 24px rgba(0, 0, 0, .15);
+}
+
+* {
+  box-sizing: border-box
+}
+
+html,
+body {
+  height: 100%
+}
+
+body {
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  background-attachment: fixed;
+  transition: color .3s ease, background .4s ease;
+}
+
+body.dark {
+  color: var(--text-d);
+  background: linear-gradient(135deg, #0b1220, #1f2937);
+}
+
+.app {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: 16px;
+}
+
+/* ===== Topbar & Branding ===== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin: -16px -16px 16px;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, .18);
+}
+
+body.dark .topbar {
+  background: rgba(0, 0, 0, .25);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(from 210deg, var(--accent), var(--accent-2));
+  color: white;
+  box-shadow: var(--shadow);
+  font-weight: 900;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--shadow);
+  font-weight: 600;
+}
+
+.btn.small {
+  padding: 8px 10px;
+  font-size: .9rem;
+}
+
+.btn.secondary {
+  background: transparent;
+  color: inherit;
+  border: 2px solid currentColor;
+  box-shadow: none;
+}
+
+/* ===== Filters/Search ===== */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+}
+
+body.dark .chip {
+  background: var(--surface-2-dark);
+  border-color: #334155;
+}
+
+.chip.active {
+  outline: 2px solid var(--accent);
+}
+
+.search {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+}
+
+.search input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: var(--surface);
+  font-size: 1rem;
+}
+
+body.dark .search input {
+  background: var(--surface-dark);
+  color: var(--text-d);
+  border-color: #334155;
+}
+
+/* ===== Game Grid & Cards ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform .2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+body.dark .card {
+  background: var(--surface-dark);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.tag {
+  font-size: .8rem;
+  opacity: .8;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .9rem;
+  opacity: .9;
+  gap: 8px;
+}
+
+/* ===== Game Screen Layout ===== */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.gamewrap {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+body.dark .gamewrap {
+  background: var(--surface-dark);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.back {
+  margin-bottom: 12px;
+}
+
+/* ===== Common Game UI Elements ===== */
+canvas {
+  display: block;
+  margin: 12px auto;
+  background: #000;
+  width: 100%;
+  height: auto;
+  max-width: 520px;
+  border-radius: 12px;
+  touch-action: none;
+}
+
+/* Tic Tac Toe grid */
+.grid-ttt {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(80px, 1fr));
+  gap: 8px;
+  max-width: 360px;
+  margin: 12px auto;
+}
+
+.cell {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 2.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+}
+
+body.dark .cell {
+  background: #111827;
+}
+
+/* Memory Match grid */
+.memory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 10px;
+  max-width: 480px;
+  margin: auto;
+}
+
+.mcard {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #fff;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  user-select: none;
+}
+
+body.dark .mcard {
+  background: #0f172a;
+}
+
+/* ===== Mobile D-pad controls ===== */
+.dpad {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  gap: 8px;
+  align-items: center;
+  justify-items: center;
+  opacity: .96;
+}
+
+.dpad .padbtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 1px solid #cbd5e1;
+  box-shadow: var(--shadow);
+}
+
+body.dark .padbtn {
+  background: #0b1220;
+  border-color: #334155;
+  color: #e5e7eb;
+}
+
+.dpad .spacer {
+  visibility: hidden
+}
+
+.mobile-only {
+  display: none
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block
+  }
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  opacity: .8;
+  padding: 24px 8px;
+}
+
+/* Sudoku / Sliding specific small tweaks */
+.sudoku-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(40px, 1fr));
+  gap: 6px;
+  max-width: 260px;
+  margin: 12px auto;
+}
+
+.sudoku-grid input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.1rem;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.sliding {
+  max-width: 320px;
+  margin: 12px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.tile {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 1.4rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  user-select: none;
+}
+
+body.dark .tile {
+  background: #0b1220;
+  color: var(--text-d);
+}

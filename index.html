@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Game Hub — Pro (Mobile+)</title>
+  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">GBK</div>
+        <div>GAMES BY KRIZAL</div>
+      </div>
+      <div class="actions">
+        <button class="btn small secondary" id="themeBtn" title="Toggle theme">🌙</button>
+        <button class="btn small secondary" id="soundBtn" title="Toggle sound">🔊</button>
+        <button class="btn small secondary" id="pauseBtn" title="Pause/Resume">⏸</button>
+        <button class="btn small secondary" id="aboutBtn" title="About">ℹ️</button>
+      </div>
+    </div>
+
+    <section id="home" class="screen active">
+      <div class="toolbar">
+        <div class="chips" id="catChips">
+          <div class="chip active" data-cat="all">All</div>
+          <div class="chip" data-cat="arcade">Arcade</div>
+          <div class="chip" data-cat="puzzle">Puzzle</div>
+          <div class="chip" data-cat="quick">Quick Play</div>
+        </div>
+        <div class="search">
+          <input id="search" placeholder="Search games..." inputmode="search" />
+        </div>
+      </div>
+      <div class="grid" id="gameGrid"></div>
+    </section>
+
+    <section id="gameView" class="screen">
+      <div class="bar">
+        <button class="btn secondary back" onclick="showHome()">⬅ Back</button>
+        <div id="gameMeta" class="meta" style="flex:1"></div>
+        <div>
+          <button class="btn small" id="restartBtn" title="Restart">↻ Restart</button>
+        </div>
+      </div>
+      <div class="gamewrap">
+        <h2 id="gameTitle" style="margin-top:0">Game</h2>
+        <div id="gameRoot"></div>
+      </div>
+    </section>
+
+    <div id="dpad" class="dpad mobile-only" style="display:none">
+      <div class="spacer"></div>
+      <button class="padbtn" data-dir="up">▲</button>
+      <div class="spacer"></div>
+      <button class="padbtn" data-dir="left">◀</button>
+      <button class="padbtn" data-dir="down">▼</button>
+      <div class="spacer"></div>
+      <button class="padbtn" data-dir="right">▶</button>
+    </div>
+
+    <footer>© <span id="year"></span> Mini Game Hub BY KRIZAL</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
