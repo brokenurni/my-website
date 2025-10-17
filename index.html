@@ -12,6 +12,7 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       background: radial-gradient(circle at top, #0d0d0d, #000);
       color: #e0e0e0;
@@ -23,69 +24,109 @@
       justify-content: center;
       text-align: center;
       overflow-x: hidden;
+      padding: 1rem;
     }
+
     h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
+      font-size: clamp(2rem, 5vw, 3.5rem);
       color: #00ffff;
       text-shadow: 0 0 15px #00ffff;
       margin-bottom: 0.5rem;
       animation: glow 3s infinite alternate;
     }
+
     @keyframes glow {
       from { text-shadow: 0 0 10px #00ffff; }
       to { text-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff; }
     }
+
     p {
       max-width: 600px;
       margin: 0.5rem auto;
       font-size: 1.1rem;
-      opacity: 0.8;
+      opacity: 0.85;
+      line-height: 1.5;
     }
+
     .projects {
-      margin: 3rem 0;
+      margin: 2.5rem 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      width: 80%;
-      max-width: 800px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 850px;
     }
+
     .project {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 2rem 1rem;
-      border-radius: 20px;
+      padding: 1.8rem 1rem;
+      border-radius: 18px;
       text-decoration: none;
       color: #00ffff;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
       transition: 0.3s;
       box-shadow: 0 0 15px rgba(0,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
+
     .project:hover {
       background: rgba(0, 255, 255, 0.1);
       transform: translateY(-5px) scale(1.03);
       box-shadow: 0 0 25px rgba(0,255,255,0.4);
     }
+
     .quote {
       margin: 2rem auto;
       font-style: italic;
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 3vw, 1.3rem);
       color: #9efaff;
       opacity: 0.9;
       max-width: 600px;
+      line-height: 1.4;
+      padding: 0 1rem;
     }
+
     footer {
       margin-top: 3rem;
       font-size: 0.9rem;
       opacity: 0.7;
+      text-align: center;
     }
+
     footer a {
       color: #00ffff;
       text-decoration: none;
+      transition: color 0.3s;
     }
+
     footer a:hover {
       text-decoration: underline;
+      color: #9efaff;
+    }
+
+    /* --- MOBILE OPTIMIZATION --- */
+    @media (max-width: 600px) {
+      body {
+        justify-content: flex-start;
+        padding-top: 2rem;
+      }
+      h1 {
+        margin-bottom: 1rem;
+      }
+      .projects {
+        margin: 2rem 0;
+        width: 100%;
+      }
+      .project {
+        padding: 1.2rem;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -103,7 +144,8 @@
   <div class="quote" id="quote">Loading quote...</div>
 
   <footer>
-    Made with ❤️ by Kzzal — <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+    Made with ❤️ by Kzzal — 
+    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
   </footer>
 
   <script>
@@ -115,7 +157,8 @@
       "“Simplicity is the soul of efficiency.” – Austin Freeman",
       "“The best error message is the one that never shows up.” – Thomas Fuchs"
     ];
-    document.getElementById("quote").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById("quote").textContent =
+      quotes[Math.floor(Math.random() * quotes.length)];
   </script>
 </body>
 </html>
