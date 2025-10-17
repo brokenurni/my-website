@@ -1,72 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Game Hub — Pro (Mobile+)</title>
   <meta name="theme-color" content="#0ea5e9" />
-  <link rel="stylesheet" href="style.css">
-</head>
+  <meta name="description" content="A fast, responsive mini-game hub for mobile and desktop by Krizal." />
+  <link rel="stylesheet" href="style.css" />
 
+  <!-- Optional: smooth modern font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto+Mono&display=swap" rel="stylesheet">
+</head>
 <body>
+  <noscript>
+    <div style="text-align:center; color:#f44; padding:1rem; font-family:sans-serif;">
+      ⚠️ JavaScript is required to run the Mini Game Hub.
+    </div>
+  </noscript>
+
   <div class="app">
-    <div class="topbar">
+
+    <!-- === Top Bar === -->
+    <header class="topbar">
       <div class="brand">
         <div class="logo">GBK</div>
-        <div>GAMES BY KRIZAL</div>
+        <div class="name">GAMES BY KRIZAL</div>
       </div>
-      <div class="actions">
-        <button class="btn small secondary" id="themeBtn" title="Toggle theme">🌙</button>
-        <button class="btn small secondary" id="soundBtn" title="Toggle sound">🔊</button>
-        <button class="btn small secondary" id="pauseBtn" title="Pause/Resume">⏸</button>
-        <button class="btn small secondary" id="aboutBtn" title="About">ℹ️</button>
-      </div>
-    </div>
 
-    <section id="home" class="screen active">
-      <div class="toolbar">
+      <nav class="actions">
+        <button class="btn small secondary" id="themeBtn" title="Toggle Theme" aria-label="Toggle Theme">🌙</button>
+        <button class="btn small secondary" id="soundBtn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+        <button class="btn small secondary" id="pauseBtn" title="Pause or Resume" aria-label="Pause or Resume">⏸</button>
+        <button class="btn small secondary" id="aboutBtn" title="About" aria-label="About">ℹ️</button>
+      </nav>
+    </header>
+
+    <!-- === Home Screen === -->
+    <main id="home" class="screen active">
+      <section class="toolbar">
         <div class="chips" id="catChips">
           <div class="chip active" data-cat="all">All</div>
           <div class="chip" data-cat="arcade">Arcade</div>
           <div class="chip" data-cat="puzzle">Puzzle</div>
           <div class="chip" data-cat="quick">Quick Play</div>
         </div>
-        <div class="search">
-          <input id="search" placeholder="Search games..." inputmode="search" />
-        </div>
-      </div>
-      <div class="grid" id="gameGrid"></div>
-    </section>
 
+        <div class="search">
+          <input type="search" id="search" placeholder="Search games..." inputmode="search" aria-label="Search games" />
+        </div>
+      </section>
+
+      <section class="grid" id="gameGrid">
+        <!-- Games will be dynamically loaded here -->
+      </section>
+    </main>
+
+    <!-- === Game View Screen === -->
     <section id="gameView" class="screen">
       <div class="bar">
-        <button class="btn secondary back" onclick="showHome()">⬅ Back</button>
+        <button class="btn secondary back" onclick="showHome()" aria-label="Go back">⬅ Back</button>
         <div id="gameMeta" class="meta" style="flex:1"></div>
-        <div>
-          <button class="btn small" id="restartBtn" title="Restart">↻ Restart</button>
-        </div>
+        <button class="btn small" id="restartBtn" title="Restart Game" aria-label="Restart Game">↻ Restart</button>
       </div>
+
       <div class="gamewrap">
-        <h2 id="gameTitle" style="margin-top:0">Game</h2>
-        <div id="gameRoot"></div>
+        <h2 id="gameTitle">Game</h2>
+        <div id="gameRoot"><!-- Game content here --></div>
       </div>
     </section>
 
-    <div id="dpad" class="dpad mobile-only" style="display:none">
-      <div class="spacer"></div>
-      <button class="padbtn" data-dir="up">▲</button>
-      <div class="spacer"></div>
-      <button class="padbtn" data-dir="left">◀</button>
-      <button class="padbtn" data-dir="down">▼</button>
-      <div class="spacer"></div>
-      <button class="padbtn" data-dir="right">▶</button>
+    <!-- === On-Screen D-Pad (mobile only) === -->
+    <div id="dpad" class="dpad mobile-only" hidden>
+      <button class="padbtn" data-dir="up" aria-label="Move Up">▲</button>
+      <div class="padrow">
+        <button class="padbtn" data-dir="left" aria-label="Move Left">◀</button>
+        <button class="padbtn" data-dir="down" aria-label="Move Down">▼</button>
+        <button class="padbtn" data-dir="right" aria-label="Move Right">▶</button>
+      </div>
     </div>
 
-    <footer>© <span id="year"></span> Mini Game Hub BY KRIZAL</footer>
+    <!-- === Footer === -->
+    <footer>
+      © <span id="year"></span> Mini Game Hub — <strong>BY KRIZAL</strong>
+    </footer>
+
   </div>
 
-  <script src="script.js"></script>
-</body>
+  <script>
+    // Auto update year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
+    // Optional dpad visibility toggle for mobile
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      document.getElementById("dpad").hidden = false;
+    }
+  </script>
+
+  <script src="script.js" defer></script>
+</body>
 </html>
