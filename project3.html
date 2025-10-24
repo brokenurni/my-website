@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afterus - Time flows. Make it divine.</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #4a1a4a 50%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 6rem; }
+        .setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+        .card { background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); border-radius: 24px; padding: 2rem; border: 1px solid rgba(168,85,247,0.2); }
+        .title { font-size: 2.5rem; font-weight: bold; background: linear-gradient(to right, #a855f7, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; margin-bottom: 0.5rem; }
+        .subtitle { color: rgba(216,180,254,0.7); text-align: center; margin-bottom: 2rem; font-size: 0.875rem; }
+        .input-group { margin-bottom: 1.5rem; }
+        .label { display: block; color: #d8b4fe; margin-bottom: 0.5rem; font-size: 0.875rem; }
+        .input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 0.75rem 1rem; color: white; font-size: 1rem; }
+        .input:focus { outline: none; border-color: #a855f7; }
+        .input::placeholder { color: rgba(216,180,254,0.3); }
+        .btn { width: 100%; background: linear-gradient(to right, #7c3aed, #d97706); color: white; border: none; border-radius: 12px; padding: 0.75rem; font-size: 1rem; font-weight: 500; cursor: pointer; transition: opacity 0.3s; }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: rgba(0,0,0,0.3); border: 1px solid rgba(168,85,247,0.3); }
+        .btn-secondary:hover { background: rgba(0,0,0,0.5); }
+        .message { text-align: center; padding: 2rem; font-size: 1.5rem; color: rgba(216,180,254,0.9); line-height: 1.6; transition: opacity 1s; }
+        .clock-ring { position: relative; width: 256px; height: 256px; margin: 0 auto; }
+        .percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .percentage-num { font-size: 2.5rem; font-weight: bold; color: #f59e0b; }
+        .percentage-label { font-size: 0.875rem; color: #d8b4fe; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+        .stat-card { background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(168,85,247,0.2); }
+        .stat-title { color: #a855f7; font-size: 0.875rem; margin-bottom: 1rem; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: white; }
+        .stat-label { color: rgba(216,180,254,0.7); }
+        .stat-value { font-weight: bold; }
+        .tabs { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-top: 1px solid rgba(168,85,247,0.2); padding: 0.75rem; }
+        .tabs-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-around; }
+        .tab { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem 1rem; border-radius: 12px; cursor: pointer; border: none; background: none; color: rgba(216,180,254,0.5); transition: all 0.3s; }
+        .tab:hover { color: #d8b4fe; }
+        .tab.active { background: rgba(168,85,247,0.2); color: #a855f7; }
+        .tab-label { font-size: 0.75rem; }
+        .duties-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .duty-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 12px; cursor: pointer; transition: background 0.3s; }
+        .duty-item:hover { background: rgba(0,0,0,0.3); }
+        .checkbox { width: 24px; height: 24px; border: 2px solid #a855f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .checkbox.checked { background: #7c3aed; }
+        .duty-text { flex: 1; color: white; }
+        .duty-text.completed { color: rgba(216,180,254,0.5); text-decoration: line-through; }
+        .note-item { background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(168,85,247,0.2); margin-bottom: 1rem; }
+        .note-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .note-emoji { font-size: 1.5rem; }
+        .note-date { color: rgba(216,180,254,0.7); font-size: 0.875rem; }
+        .note-text { color: white; white-space: pre-wrap; }
+        .prompt-card { background: linear-gradient(135deg, rgba(76,29,149,0.3), rgba(217,119,6,0.3)); backdrop-filter: blur(10px); border-radius: 16px; padding: 2rem; border: 1px solid rgba(168,85,247,0.2); margin-bottom: 1.5rem; transition: border-color 0.3s; }
+        .prompt-card:hover { border-color: rgba(168,85,247,0.4); }
+        .prompt-text { text-align: center; font-size: 1.5rem; line-height: 1.6; color: rgba(226,183,240,1); font-weight: 300; }
+        .section-title { font-size: 2rem; font-weight: bold; background: linear-gradient(to right, #a855f7, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; margin-bottom: 0.5rem; }
+        .section-subtitle { color: rgba(216,180,254,0.7); text-align: center; margin-bottom: 2rem; }
+        .input-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .textarea { width: 100%; min-height: 120px; background: rgba(0,0,0,0.3); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 0.75rem; color: white; font-family: inherit; font-size: 1rem; resize: none; }
+        .textarea:focus { outline: none; border-color: #a855f7; }
+        .btn-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.875rem; border-radius: 8px; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: rgba(216,180,254,0.5); }
+        .welcome { text-align: center; padding-top: 1rem; font-size: 1.5rem; color: rgba(216,180,254,0.7); }
+        .welcome-name { background: linear-gradient(to right, #a855f7, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 600; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.5s ease-out; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .title { font-size: 2rem; }
+            .section-title { font-size: 1.5rem; }
+            .prompt-text { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const MESSAGES = [
+            "In 2525, none of us will exist. So live kindly.",
+            "Every second is a sacred chance.",
+            "The people you're angry at will be dust — forgive them.",
+            "Live like your memory will glow after you.",
+            "Time flows. Make it divine.",
+            "This moment will never return. Make it count.",
+            "Your descendants will tell your story. What will they say?",
+            "Be the ancestor your future needed."
+        ];
+
+        const GRATITUDE = [
+            "This problem means you're still alive.",
+            "You have time to fix it — that's a blessing.",
+            "The fact you can worry means you care deeply.",
+            "Every challenge is proof you're still growing.",
+            "Your breath is a gift. Everything else is extra."
+        ];
+
+        const DUTY_EXAMPLES = ["Be kind", "Help family", "Create beauty", "Learn something", "Forgive someone"];
+
+        let state = {
+            showSetup: true,
+            showTimeInput: false,
+            activeTab: 'clock',
+            userName: '',
+            birthDate: '',
+            birthTime: '12:00',
+            lifespan: 80,
+            showSeconds: false,
+            soundEnabled: false,
+            currentMessage: 0,
+            messageOpacity: 1,
+            timeData: null,
+            duties: [],
+            notes: [],
+            newDuty: '',
+            newNote: '',
+            noteType: 'idea'
+        };
+
+        let audioContext = null;
+        let oscillator = null;
+        let gainNode = null;
+        let messageInterval = null;
+        let timeInterval = null;
+
+        function loadData() {
+            try {
+                const userData = localStorage.getItem('afterus_user');
+                if (userData) {
+                    const data = JSON.parse(userData);
+                    state.userName = data.userName || '';
+                    state.birthDate = data.birthDate || '';
+                    state.birthTime = data.birthTime || '12:00';
+                    state.lifespan = data.lifespan || 80;
+                    state.showSetup = !data.birthDate;
+                }
+                const duties = localStorage.getItem('afterus_duties');
+                if (duties) state.duties = JSON.parse(duties);
+                const notes = localStorage.getItem('afterus_notes');
+                if (notes) state.notes = JSON.parse(notes);
+            } catch (e) {
+                console.log('Starting fresh');
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('afterus_user', JSON.stringify({
+                    userName: state.userName,
+                    birthDate: state.birthDate,
+                    birthTime: state.birthTime,
+                    lifespan: state.lifespan
+                }));
+                if (state.duties.length > 0) {
+                    localStorage.setItem('afterus_duties', JSON.stringify(state.duties));
+                }
+                if (state.notes.length > 0) {
+                    localStorage.setItem('afterus_notes', JSON.stringify(state.notes));
+                }
+            } catch (e) {
+                console.error('Save failed');
+            }
+        }
+
+        function startSound() {
+            try {
+                if (!audioContext) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new AudioContext();
+                    oscillator = audioContext.createOscillator();
+                    gainNode = audioContext.createGain();
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(432, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.start();
+                }
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        function stopSound() {
+            try {
+                if (oscillator) {
+                    oscillator.stop();
+                    oscillator.disconnect();
+                    gainNode.disconnect();
+                    oscillator = null;
+                    gainNode = null;
+                    audioContext = null;
+                }
+            } catch (e) {}
+        }
+
+        function updateTime() {
+            if (!state.birthDate) return;
+            
+            const now = new Date();
+            const birth = new Date(state.birthDate);
+            
+            if (state.showSeconds && state.birthTime) {
+                const [hours, minutes] = state.birthTime.split(':');
+                birth.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            } else {
+                birth.setHours(0, 0, 0, 0);
+            }
+            
+            const endDate = new Date(birth);
+            endDate.setFullYear(birth.getFullYear() + state.lifespan);
+
+            const totalMs = endDate - birth;
+            const livedMs = now - birth;
+            const remainingMs = endDate - now;
+
+            const calcTime = (ms) => ({
+                years: Math.floor(ms / (365.25 * 24 * 60 * 60 * 1000)),
+                months: Math.floor((ms % (365.25 * 24 * 60 * 60 * 1000)) / (30.44 * 24 * 60 * 60 * 1000)),
+                days: Math.floor((ms % (30.44 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000)),
+                hours: Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)),
+                minutes: Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000)),
+                seconds: Math.floor((ms % (60 * 1000)) / 1000)
+            });
+
+            const percentage = Math.max(0, Math.min(100, (livedMs / totalMs) * 100));
+
+            state.timeData = {
+                lived: calcTime(Math.max(0, livedMs)),
+                remaining: calcTime(Math.max(0, remainingMs)),
+                percentage: percentage.toFixed(4)
+            };
+        }
+
+        function startMessageRotation() {
+            if (messageInterval) clearInterval(messageInterval);
+            messageInterval = setInterval(() => {
+                state.messageOpacity = 0;
+                render();
+                setTimeout(() => {
+                    state.currentMessage = (state.currentMessage + 1) % MESSAGES.length;
+                    state.messageOpacity = 1;
+                    render();
+                }, 1000);
+            }, 8000);
+        }
+
+        function startTimeUpdate() {
+            if (timeInterval) clearInterval(timeInterval);
+            updateTime();
+            timeInterval = setInterval(() => {
+                updateTime();
+                if (state.activeTab === 'clock') render();
+            }, 1000);
+        }
+
+        function handleSetup() {
+            if (state.birthDate && state.userName.trim()) {
+                state.showSetup = false;
+                saveData();
+                startTimeUpdate();
+                startMessageRotation();
+                render();
+            }
+        }
+
+        function handleTimeSubmit() {
+            if (state.birthTime) {
+                state.showSeconds = true;
+                state.showTimeInput = false;
+                saveData();
+                render();
+            }
+        }
+
+        function addDuty() {
+            if (state.newDuty.trim()) {
+                state.duties.push({ text: state.newDuty, completed: false, id: Date.now() });
+                state.newDuty = '';
+                saveData();
+                render();
+            }
+        }
+
+        function toggleDuty(id) {
+            state.duties = state.duties.map(d => 
+                d.id === id ? { ...d, completed: !d.completed } : d
+            );
+            saveData();
+            render();
+        }
+
+        function addNote() {
+            if (state.newNote.trim()) {
+                const emoji = state.noteType === 'idea' ? '💭' : '⚡';
+                state.notes.unshift({
+                    text: state.newNote,
+                    type: state.noteType,
+                    emoji,
+                    date: new Date().toLocaleDateString(),
+                    id: Date.now()
+                });
+                state.newNote = '';
+                saveData();
+                render();
+            }
+        }
+
+        function handleReset() {
+            if (confirm('⚠️ Delete ALL data?\n\n• Profile\n• Duties\n• Notes\n\nCannot be undone. Continue?')) {
+                localStorage.clear();
+                state = {
+                    showSetup: true,
+                    showTimeInput: false,
+                    activeTab: 'clock',
+                    userName: '',
+                    birthDate: '',
+                    birthTime: '12:00',
+                    lifespan: 80,
+                    showSeconds: false,
+                    soundEnabled: false,
+                    currentMessage: 0,
+                    messageOpacity: 1,
+                    timeData: null,
+                    duties: [],
+                    notes: [],
+                    newDuty: '',
+                    newNote: '',
+                    noteType: 'idea'
+                };
+                stopSound();
+                render();
+            }
+        }
+
+        function renderSetup() {
+            return `
+                <div class="setup-screen">
+                    <div class="card" style="max-width: 500px; width: 100%;">
+                        <h1 class="title">Afterus</h1>
+                        <p class="subtitle">Time flows. Make it divine.</p>
+                        
+                        <div class="input-group">
+                            <label class="label">Your Name</label>
+                            <input type="text" class="input" placeholder="Enter your name" 
+                                value="${state.userName}" 
+                                oninput="state.userName = this.value; render()">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label">Your Birth Date</label>
+                            <input type="date" class="input" 
+                                value="${state.birthDate}"
+                                onchange="state.birthDate = this.value; render()">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label">Desired Lifespan: ${state.lifespan} years</label>
+                            <input type="range" min="60" max="120" value="${state.lifespan}" 
+                                oninput="state.lifespan = parseInt(this.value); render()">
+                        </div>
+
+                        <button class="btn" onclick="handleSetup()" 
+                            ${!state.birthDate || !state.userName.trim() ? 'disabled' : ''}>
+                            Begin Journey
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimeInput() {
+            return `
+                <div class="setup-screen">
+                    <div class="card" style="max-width: 500px; width: 100%;">
+                        <h2 class="title" style="font-size: 1.5rem;">⚠️ Precise Time Required</h2>
+                        <p class="subtitle">To show hours, minutes, and seconds, we need your exact birth time.</p>
+                        <p class="subtitle" style="margin-bottom: 2rem;">Watching seconds tick away is intense. Prepare yourself.</p>
+                        
+                        <div class="input-group">
+                            <label class="label">Your Birth Time</label>
+                            <input type="time" class="input" 
+                                value="${state.birthTime}"
+                                onchange="state.birthTime = this.value">
+                        </div>
+
+                        <button class="btn" onclick="handleTimeSubmit()">Enable Precise Time</button>
+                        <button class="btn btn-secondary" style="margin-top: 0.5rem;" 
+                            onclick="state.showTimeInput = false; render()">Cancel</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderClock() {
+            if (!state.timeData) return '<div class="container"><p style="text-align: center;">Loading...</p></div>';
+            
+            const circumference = 2 * Math.PI * 120;
+            const offset = circumference * (1 - state.timeData.percentage / 100);
+
+            return `
+                <div class="container animate-in">
+                    <div class="welcome">
+                        Welcome, <span class="welcome-name">${state.userName}</span>
+                    </div>
+
+                    <div class="message" style="opacity: ${state.messageOpacity}">
+                        ${MESSAGES[state.currentMessage]}
+                    </div>
+
+                    <div class="clock-ring">
+                        <svg width="256" height="256" style="transform: rotate(-90deg)">
+                            <circle cx="128" cy="128" r="120" fill="none" 
+                                stroke="rgba(168,85,247,0.1)" stroke-width="8" />
+                            <circle cx="128" cy="128" r="120" fill="none" 
+                                stroke="url(#grad)" stroke-width="8" 
+                                stroke-dasharray="${circumference}" 
+                                stroke-dashoffset="${offset}"
+                                stroke-linecap="round"
+                                style="transition: stroke-dashoffset 1s" />
+                            <defs>
+                                <linearGradient id="grad">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#f59e0b" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="percentage">
+                            <div class="percentage-num">${state.timeData.percentage}%</div>
+                            <div class="percentage-label">lived</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 class="stat-title">Time Lived</h3>
+                            <div class="stat-row"><span class="stat-label">Years</span><span class="stat-value">${state.timeData.lived.years}</span></div>
+                            <div class="stat-row"><span class="stat-label">Months</span><span class="stat-value">${state.timeData.lived.months}</span></div>
+                            <div class="stat-row"><span class="stat-label">Days</span><span class="stat-value">${state.timeData.lived.days}</span></div>
+                            ${state.showSeconds ? `
+                                <div class="stat-row"><span class="stat-label">Hours</span><span class="stat-value">${state.timeData.lived.hours}</span></div>
+                                <div class="stat-row"><span class="stat-label">Minutes</span><span class="stat-value">${state.timeData.lived.minutes}</span></div>
+                                <div class="stat-row"><span class="stat-label">Seconds</span><span class="stat-value">${state.timeData.lived.seconds}</span></div>
+                            ` : ''}
+                        </div>
+
+                        <div class="stat-card" style="border-color: rgba(245,158,11,0.2);">
+                            <h3 class="stat-title" style="color: #f59e0b;">Time Remaining</h3>
+                            <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Years</span><span class="stat-value">${state.timeData.remaining.years}</span></div>
+                            <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Months</span><span class="stat-value">${state.timeData.remaining.months}</span></div>
+                            <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Days</span><span class="stat-value">${state.timeData.remaining.days}</span></div>
+                            ${state.showSeconds ? `
+                                <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Hours</span><span class="stat-value">${state.timeData.remaining.hours}</span></div>
+                                <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Minutes</span><span class="stat-value">${state.timeData.remaining.minutes}</span></div>
+                                <div class="stat-row"><span class="stat-label" style="color: rgba(253,230,186,0.7);">Seconds</span><span class="stat-value">${state.timeData.remaining.seconds}</span></div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="${state.showSeconds ? 'state.showSeconds = false' : 'state.showTimeInput = true'}; render()">
+                        ${state.showSeconds ? 'Hide' : 'Show'} Hours/Minutes/Seconds
+                    </button>
+
+                    <button class="btn btn-secondary" style="margin-top: 0.5rem;" 
+                        onclick="state.soundEnabled = !state.soundEnabled; state.soundEnabled ? startSound() : stopSound(); render()">
+                        🎵 ${state.soundEnabled ? 'Sound On (432 Hz)' : 'Enable Calm Sound'}
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderPurpose() {
+            return `
+                <div class="container animate-in">
+                    <h2 class="section-title">Your Purpose</h2>
+                    <p class="section-subtitle">Did you fulfill your duties today?</p>
+
+                    <div class="card">
+                        <div class="input-row">
+                            <input type="text" class="input" placeholder="Add a meaningful duty..." 
+                                value="${state.newDuty}"
+                                oninput="state.newDuty = this.value"
+                                onkeypress="if(event.key==='Enter') addDuty()">
+                            <button class="btn" style="width: auto; padding: 0.75rem 1.5rem;" onclick="addDuty()">Add</button>
+                        </div>
+
+                        ${state.duties.length === 0 ? `
+                            <div class="empty-state">
+                                <p style="margin-bottom: 1rem;">Start with something simple:</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                                    ${DUTY_EXAMPLES.map(ex => `
+                                        <button class="btn-secondary btn-small" onclick="state.newDuty = '${ex}'; render()">${ex}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="duties-list">
+                                ${state.duties.map(duty => `
+                                    <div class="duty-item" onclick="toggleDuty(${duty.id})">
+                                        <div class="checkbox ${duty.completed ? 'checked' : ''}">
+                                            ${duty.completed ? '✓' : ''}
+                                        </div>
+                                        <div class="duty-text ${duty.completed ? 'completed' : ''}">${duty.text}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderJournal() {
+            return `
+                <div class="container animate-in">
+                    <h2 class="section-title">Your Journal</h2>
+                    <p class="section-subtitle">Capture your thoughts and inspirations</p>
+
+                    <div class="card">
+                        <div class="btn-group">
+                            <button class="btn-small ${state.noteType === 'idea' ? '' : 'btn-secondary'}" 
+                                style="flex: 1;" onclick="state.noteType = 'idea'; render()">
+                                💭 Idea
+                            </button>
+                            <button class="btn-small ${state.noteType === 'inspired' ? '' : 'btn-secondary'}" 
+                                style="flex: 1;" onclick="state.noteType = 'inspired'; render()">
+                                ⚡ Inspired
+                            </button>
+                        </div>
+
+                        <textarea class="textarea" placeholder="Write your thoughts..."
+                            oninput="state.newNote = this.value">${state.newNote}</textarea>
+
+                        <button class="btn" onclick="addNote()" ${!state.newNote.trim() ? 'disabled' : ''}>
+                            Save Note
+                        </button>
+                    </div>
+
+                    ${state.notes.length === 0 ? `
+                        <div class="empty-state">
+                            <p>Your thoughts will appear here</p>
+                        </div>
+                    ` : state.notes.map(note => `
+                        <div class="note-item">
+                            <div class="note-header">
+                                <span class="note-emoji">${note.emoji}</span>
+                                <span class="note-date">${note.date}</span>
+                            </div>
+                            <div class="note-text">${note.text}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderFantastic() {
+            return `
+                <div class="container animate-in">
+                    <h2 class="section-title">Life Is Fantastic</h2>
+                    <p class="section-subtitle">Find peace in perspective</p>
+
+                    ${GRATITUDE.map(prompt => `
+                        <div class="prompt-card">
+                            <p class="prompt-text">${prompt}</p>
+                        </div>
+                    `).join('')}
+
+                    <div class="card" style="text-align: center; border-color: rgba(245,158,11,0.2);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
+                        <p style="font-size: 1.25rem; color: #fde68a; margin-bottom: 0.5rem;">Remember</p>
+                        <p style="color: rgba(216,180,254,0.7);">
+                            Every breath is a miracle. Every problem means you're alive enough to face it.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettings() {
+            return `
+                <div class="container animate-in">
+                    <h2 class="section-title">Settings</h2>
+
+                    <div class="card">
+                        <div class="input-group">
+                            <label class="label">Name</label>
+                            <input type="text" class="input" value="${state.userName}" 
+                                oninput="state.userName = this.value">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label">Birth Date</label>
+                            <input type="date" class="input" value="${state.birthDate}" 
+                                onchange="state.birthDate = this.value">
+                        </div>
+
+                        ${state.showSeconds ? `
+                            <div class="input-group">
+                                <label class="label">Birth Time</label>
+                                <input type="time" class="input" value="${state.birthTime}" 
+                                    onchange="state.birthTime = this.value">
+                            </div>
+                        ` : ''}
+
+                        <div class="input-group">
+                            <label class="label">Desired Lifespan: ${state.lifespan} years</label>
+                            <input type="range" min="60" max="120" value="${state.lifespan}" 
+                                oninput="state.lifespan = parseInt(this.value); render()">
+                        </div>
+
+                        <button class="btn" onclick="saveData(); alert('✅ Changes saved!')">
+                            Save Changes
+                        </button>
+
+                        <button class="btn btn-secondary" style="margin-top: 0.5rem; color: #fca5a5; border-color: rgba(239,68,68,0.3);" 
+                            onclick="handleReset()">
+                            Reset Everything
+                        </button>
+                    </div>
+
+                    <div style="text-align: center; color: rgba(216,180,254,0.5); font-size: 0.875rem; margin-top: 2rem;">
+                        <p>Afterus v1.0</p>
+                        <p style="margin-top: 0.5rem;">After us, what remains?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTabs() {
+            const tabs = [
+                { id: 'clock', icon: '🕐', label: 'Clock' },
+                { id: 'purpose', icon: '🎯', label: 'Purpose' },
+                { id: 'journal', icon: '📖', label: 'Journal' },
+                { id: 'fantastic', icon: '✨', label: 'Fantastic' },
+                { id: 'settings', icon: '⚙️', label: 'Settings' }
+            ];
+
+            return `
+                <div class="tabs">
+                    <div class="tabs-inner">
+                        ${tabs.map(tab => `
+                            <button class="tab ${state.activeTab === tab.id ? 'active' : ''}" 
+                                onclick="state.activeTab = '${tab.id}'; render()">
+                                <span style="font-size: 1.25rem;">${tab.icon}</span>
+                                <span class="tab-label">${tab.label}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (state.showSetup) {
+                app.innerHTML = renderSetup();
+            } else if (state.showTimeInput) {
+                app.innerHTML = renderTimeInput();
+            } else {
+                let content = '';
+                switch (state.activeTab) {
+                    case 'clock': content = renderClock(); break;
+                    case 'purpose': content = renderPurpose(); break;
+                    case 'journal': content = renderJournal(); break;
+                    case 'fantastic': content = renderFantastic(); break;
+                    case 'settings': content = renderSettings(); break;
+                }
+                app.innerHTML = content + renderTabs();
+            }
+        }
+
+        // Initialize
+        loadData();
+        if (!state.showSetup) {
+            startTimeUpdate();
+            startMessageRotation();
+        }
+        render();
+    </script>
+</body>
+</html>
