@@ -127,47 +127,17 @@
 
         let audioContext = null;
         let oscillator = null;
+        let oscillator2 = null;
         let gainNode = null;
         let messageInterval = null;
         let timeInterval = null;
 
         function loadData() {
-            try {
-                const userData = localStorage.getItem('afterus_user');
-                if (userData) {
-                    const data = JSON.parse(userData);
-                    state.userName = data.userName || '';
-                    state.birthDate = data.birthDate || '';
-                    state.birthTime = data.birthTime || '12:00';
-                    state.lifespan = data.lifespan || 80;
-                    state.showSetup = !data.birthDate;
-                }
-                const duties = localStorage.getItem('afterus_duties');
-                if (duties) state.duties = JSON.parse(duties);
-                const notes = localStorage.getItem('afterus_notes');
-                if (notes) state.notes = JSON.parse(notes);
-            } catch (e) {
-                console.log('Starting fresh');
-            }
+            // In-memory storage only
         }
 
         function saveData() {
-            try {
-                localStorage.setItem('afterus_user', JSON.stringify({
-                    userName: state.userName,
-                    birthDate: state.birthDate,
-                    birthTime: state.birthTime,
-                    lifespan: state.lifespan
-                }));
-                if (state.duties.length > 0) {
-                    localStorage.setItem('afterus_duties', JSON.stringify(state.duties));
-                }
-                if (state.notes.length > 0) {
-                    localStorage.setItem('afterus_notes', JSON.stringify(state.notes));
-                }
-            } catch (e) {
-                console.error('Save failed');
-            }
+            // In-memory storage only
         }
 
         function startSound() {
@@ -175,14 +145,26 @@
                 if (!audioContext) {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     audioContext = new AudioContext();
+                    
+                    // First oscillator - base note
                     oscillator = audioContext.createOscillator();
-                    gainNode = audioContext.createGain();
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(432, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(174.61, audioContext.currentTime); // F3
+                    
+                    // Second oscillator - harmony
+                    oscillator2 = audioContext.createOscillator();
+                    oscillator2.type = 'sine';
+                    oscillator2.frequency.setValueAtTime(261.63, audioContext.currentTime); // C4
+                    
+                    gainNode = audioContext.createGain();
+                    gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                    
                     oscillator.connect(gainNode);
+                    oscillator2.connect(gainNode);
                     gainNode.connect(audioContext.destination);
+                    
                     oscillator.start();
+                    oscillator2.start();
                 }
             } catch (e) {
                 console.log('Audio not available');
@@ -194,8 +176,11 @@
                 if (oscillator) {
                     oscillator.stop();
                     oscillator.disconnect();
+                    oscillator2.stop();
+                    oscillator2.disconnect();
                     gainNode.disconnect();
                     oscillator = null;
+                    oscillator2 = null;
                     gainNode = null;
                     audioContext = null;
                 }
@@ -243,12 +228,17 @@
         function startMessageRotation() {
             if (messageInterval) clearInterval(messageInterval);
             messageInterval = setInterval(() => {
-                state.messageOpacity = 0;
-                render();
+                if (state.activeTab !== 'clock' || state.showSetup || state.showTimeInput) return;
+                
+                const messageEl = document.querySelector('.message');
+                if (!messageEl) return;
+                
+                messageEl.style.opacity = '0';
+                
                 setTimeout(() => {
                     state.currentMessage = (state.currentMessage + 1) % MESSAGES.length;
-                    state.messageOpacity = 1;
-                    render();
+                    messageEl.textContent = MESSAGES[state.currentMessage];
+                    messageEl.style.opacity = '1';
                 }, 1000);
             }, 8000);
         }
@@ -258,8 +248,50 @@
             updateTime();
             timeInterval = setInterval(() => {
                 updateTime();
-                if (state.activeTab === 'clock') render();
+                if (state.activeTab === 'clock' && !state.showSetup && !state.showTimeInput) {
+                    updateClockOnly();
+                }
             }, 1000);
+        }
+
+        function updateClockOnly() {
+            if (!state.timeData) return;
+            
+            const percentageEl = document.querySelector('.percentage-num');
+            if (percentageEl) {
+                percentageEl.textContent = state.timeData.percentage + '%';
+            }
+            
+            const statValues = document.querySelectorAll('.stat-value');
+            if (statValues.length > 0) {
+                let idx = 0;
+                statValues[idx++].textContent = state.timeData.lived.years;
+                statValues[idx++].textContent = state.timeData.lived.months;
+                statValues[idx++].textContent = state.timeData.lived.days;
+                
+                if (state.showSeconds) {
+                    statValues[idx++].textContent = state.timeData.lived.hours;
+                    statValues[idx++].textContent = state.timeData.lived.minutes;
+                    statValues[idx++].textContent = state.timeData.lived.seconds;
+                }
+                
+                statValues[idx++].textContent = state.timeData.remaining.years;
+                statValues[idx++].textContent = state.timeData.remaining.months;
+                statValues[idx++].textContent = state.timeData.remaining.days;
+                
+                if (state.showSeconds) {
+                    statValues[idx++].textContent = state.timeData.remaining.hours;
+                    statValues[idx++].textContent = state.timeData.remaining.minutes;
+                    statValues[idx++].textContent = state.timeData.remaining.seconds;
+                }
+            }
+            
+            const circle = document.querySelector('circle[stroke-dashoffset]');
+            if (circle) {
+                const circumference = 2 * Math.PI * 120;
+                const offset = circumference * (1 - state.timeData.percentage / 100);
+                circle.setAttribute('stroke-dashoffset', offset);
+            }
         }
 
         function handleSetup() {
@@ -316,7 +348,12 @@
 
         function handleReset() {
             if (confirm('⚠️ Delete ALL data?\n\n• Profile\n• Duties\n• Notes\n\nCannot be undone. Continue?')) {
-                localStorage.clear();
+                stopSound();
+                if (messageInterval) clearInterval(messageInterval);
+                if (timeInterval) clearInterval(timeInterval);
+                messageInterval = null;
+                timeInterval = null;
+                
                 state = {
                     showSetup: true,
                     showTimeInput: false,
@@ -336,7 +373,6 @@
                     newNote: '',
                     noteType: 'idea'
                 };
-                stopSound();
                 render();
             }
         }
@@ -352,7 +388,7 @@
                             <label class="label">Your Name</label>
                             <input type="text" class="input" placeholder="Enter your name" 
                                 value="${state.userName}" 
-                                oninput="state.userName = this.value; render()">
+                                oninput="state.userName = this.value">
                         </div>
 
                         <div class="input-group">
@@ -365,7 +401,7 @@
                         <div class="input-group">
                             <label class="label">Desired Lifespan: ${state.lifespan} years</label>
                             <input type="range" min="60" max="120" value="${state.lifespan}" 
-                                oninput="state.lifespan = parseInt(this.value); render()">
+                                oninput="state.lifespan = parseInt(this.value); document.querySelector('.label').textContent = 'Desired Lifespan: ' + this.value + ' years'">
                         </div>
 
                         <button class="btn" onclick="handleSetup()" 
@@ -424,8 +460,7 @@
                                 stroke="url(#grad)" stroke-width="8" 
                                 stroke-dasharray="${circumference}" 
                                 stroke-dashoffset="${offset}"
-                                stroke-linecap="round"
-                                style="transition: stroke-dashoffset 1s" />
+                                stroke-linecap="round" />
                             <defs>
                                 <linearGradient id="grad">
                                     <stop offset="0%" stop-color="#a855f7" />
@@ -471,7 +506,7 @@
 
                     <button class="btn btn-secondary" style="margin-top: 0.5rem;" 
                         onclick="state.soundEnabled = !state.soundEnabled; state.soundEnabled ? startSound() : stopSound(); render()">
-                        🎵 ${state.soundEnabled ? 'Sound On (432 Hz)' : 'Enable Calm Sound'}
+                        🎵 ${state.soundEnabled ? 'Sound On (F & C)' : 'Enable Calm Sound'}
                     </button>
                 </div>
             `;
@@ -488,7 +523,7 @@
                             <input type="text" class="input" placeholder="Add a meaningful duty..." 
                                 value="${state.newDuty}"
                                 oninput="state.newDuty = this.value"
-                                onkeypress="if(event.key==='Enter') addDuty()">
+                                onkeypress="if(event.key==='Enter') { addDuty(); event.preventDefault(); }">
                             <button class="btn" style="width: auto; padding: 0.75rem 1.5rem;" onclick="addDuty()">Add</button>
                         </div>
 
@@ -497,7 +532,7 @@
                                 <p style="margin-bottom: 1rem;">Start with something simple:</p>
                                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
                                     ${DUTY_EXAMPLES.map(ex => `
-                                        <button class="btn-secondary btn-small" onclick="state.newDuty = '${ex}'; render()">${ex}</button>
+                                        <button class="btn-secondary btn-small" onclick="state.newDuty = '${ex}'; document.querySelector('.input').value = '${ex}'">${ex}</button>
                                     `).join('')}
                                 </div>
                             </div>
@@ -537,9 +572,10 @@
                         </div>
 
                         <textarea class="textarea" placeholder="Write your thoughts..."
-                            oninput="state.newNote = this.value">${state.newNote}</textarea>
+                            oninput="state.newNote = this.value"
+                            id="noteTextarea">${state.newNote}</textarea>
 
-                        <button class="btn" onclick="addNote()" ${!state.newNote.trim() ? 'disabled' : ''}>
+                        <button class="btn" onclick="addNote()">
                             Save Note
                         </button>
                     </div>
@@ -616,7 +652,7 @@
                                 oninput="state.lifespan = parseInt(this.value); render()">
                         </div>
 
-                        <button class="btn" onclick="saveData(); alert('✅ Changes saved!')">
+                        <button class="btn" onclick="saveData(); updateTime(); startTimeUpdate(); alert('✅ Changes saved!')">
                             Save Changes
                         </button>
 
@@ -660,6 +696,7 @@
 
         function render() {
             const app = document.getElementById('app');
+            if (!app) return;
             
             if (state.showSetup) {
                 app.innerHTML = renderSetup();
