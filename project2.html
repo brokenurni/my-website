@@ -3,154 +3,436 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mood Buddy — Simple Motivator</title>
+<title>Earth Impact Simulator</title>
 <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: system-ui, sans-serif;
-    margin: 0;
-    background: radial-gradient(circle at top left,#0a192f,#020509);
-    color: #e0ffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-family: 'Arial', sans-serif;
+    background: #000;
+    color: #fff;
     min-height: 100vh;
   }
-  h1 {
-    margin-top: 24px;
-    color: #00f0ff;
-    text-shadow: 0 0 10px #00f0ff;
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
   }
-  .chat {
-    width: 90%;
-    max-width: 700px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(0,255,255,0.1);
-    border-radius: 16px;
-    padding: 16px;
+  .header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 20px;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 600px) {
+    .header h1 {
+      font-size: 1.8em;
+    }
+    .header p {
+      font-size: 0.9em;
+    }
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+  }
+  @media (max-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+    .sidebar {
+      order: -1;
+    }
+  }
+  .earth-section {
+    background: rgba(30, 60, 114, 0.3);
+    border-radius: 15px;
+    padding: 30px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
-    overflow-y: auto;
-    box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    position: relative;
   }
-  .msg {
-    padding: 10px 14px;
-    border-radius: 12px;
-    max-width: 80%;
-    line-height: 1.4;
-    word-wrap: break-word;
+  .earth {
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    position: relative;
+    background: url('https://raw.githubusercontent.com/brokenurni/my-website/main/land_ocean_ice_cloud_2048.jpg') center/cover;
+    box-shadow: 0 0 60px rgba(46, 139, 87, 0.6);
+    animation: rotate 30s linear infinite;
+    overflow: visible;
   }
-  .user {
-    align-self: flex-end;
+  @media (max-width: 600px) {
+    .earth {
+      width: 250px;
+      height: 250px;
+    }
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .pollution-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(139, 69, 19, 0);
+    transition: background 0.5s;
+    pointer-events: none;
+  }
+  .ice-cap {
+    position: absolute;
+    background: radial-gradient(circle, #fff, #b0e0e6);
+    border-radius: 50%;
+    transition: all 0.5s;
+  }
+  .ice-top {
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 50px;
+  }
+  .ice-bottom {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 50px;
+  }
+  .trash-item, .fire-item {
+    position: absolute;
+    font-size: 30px;
+    animation: bob 2s ease-in-out infinite;
+    filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.8));
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .fire-item {
+    animation: flicker 0.3s infinite alternate;
+  }
+  @keyframes flicker {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; filter: brightness(1.2); }
+  }
+  .sidebar {
+    background: rgba(30, 60, 114, 0.5);
+    border-radius: 15px;
+    padding: 20px;
+  }
+  .stat-card {
     background: rgba(255,255,255,0.1);
-  }
-  .bot {
-    align-self: flex-start;
-    background: rgba(0,255,255,0.15);
-    color: #00faff;
-  }
-  .inputbar {
-    display: flex;
-    width: 90%;
-    max-width: 700px;
-    margin: 12px 0;
-    gap: 8px;
-  }
-  input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 12px;
-    border: none;
-    outline: none;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-  }
-  button {
-    background: #00f0ff;
-    border: none;
-    color: #000;
-    padding: 10px 16px;
+    padding: 15px;
     border-radius: 10px;
-    cursor: pointer;
+    margin-bottom: 15px;
+    border-left: 4px solid #4CAF50;
+  }
+  .stat-card.warning { border-left-color: #ff9800; }
+  .stat-card.danger { border-left-color: #f44336; }
+  .stat-label {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-bottom: 5px;
+  }
+  .stat-value {
+    font-size: 2em;
     font-weight: bold;
   }
-  button:hover { background: #0ff; }
+  .health-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .health-fill {
+    height: 100%;
+    background: #4CAF50;
+    transition: all 0.5s;
+    text-align: center;
+    line-height: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+  }
+  .controls {
+    margin-top: 20px;
+  }
+  .controls h3 {
+    margin-bottom: 15px;
+  }
+  .btn {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #fff;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+  }
+  .btn-pollution { background: linear-gradient(135deg, #8b4513, #654321); }
+  .btn-trash { background: linear-gradient(135deg, #555, #333); }
+  .btn-fire { background: linear-gradient(135deg, #ff4500, #ff6347); }
+  .btn-ice { background: linear-gradient(135deg, #4682b4, #5f9ea0); }
+  .btn-reset { background: linear-gradient(135deg, #4CAF50, #45a049); }
+  .warning-box {
+    background: rgba(255, 0, 0, 0.2);
+    border: 2px solid rgba(255, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  .warning-box h4 {
+    color: #ff6b6b;
+    margin-bottom: 10px;
+  }
+  .warning-item {
+    margin: 8px 0;
+    font-size: 0.9em;
+  }
 </style>
 </head>
 <body>
-  <h1>💬 Mood Buddy</h1>
-  <div class="chat" id="chat"></div>
-  <div class="inputbar">
-    <input id="text" placeholder="Tell me how you feel...">
-    <button id="send">Send</button>
+  <div class="container">
+    <div class="header">
+      <h1>🌍 Earth Impact Simulator</h1>
+      <p>See how pollution and climate change affect our planet in real-time</p>
+    </div>
+    
+    <div class="main-grid">
+      <div class="earth-section">
+        <div class="earth" id="earth">
+          <div class="pollution-overlay" id="pollution"></div>
+          <div class="ice-cap ice-top" id="iceTop"></div>
+          <div class="ice-cap ice-bottom" id="iceBottom"></div>
+        </div>
+      </div>
+      
+      <div class="sidebar">
+        <div class="stat-card" id="healthCard">
+          <div class="stat-label">🌍 Earth Health</div>
+          <div class="stat-value" id="healthValue">100%</div>
+          <div class="health-bar">
+            <div class="health-fill" id="healthFill" style="width: 100%;"></div>
+          </div>
+        </div>
+        
+        <div class="stat-card" id="tempCard">
+          <div class="stat-label">🌡️ Temperature</div>
+          <div class="stat-value" id="tempValue">15.0°C</div>
+        </div>
+        
+        <div class="stat-card" id="pollutionCard">
+          <div class="stat-label">💨 Pollution</div>
+          <div class="stat-value" id="pollutionValue">0%</div>
+        </div>
+        
+        <div class="stat-card" id="trashCard">
+          <div class="stat-label">🗑️ Waste</div>
+          <div class="stat-value" id="trashValue">0 tons</div>
+        </div>
+        
+        <div class="stat-card" id="iceCard">
+          <div class="stat-label">🧊 Ice Caps</div>
+          <div class="stat-value" id="iceValue">100%</div>
+        </div>
+        
+        <div class="controls">
+          <h3>Add Impact:</h3>
+          <button class="btn btn-pollution" onclick="addPollution()">💨 Add Pollution</button>
+          <button class="btn btn-trash" onclick="addTrash()">🗑️ Dump Trash</button>
+          <button class="btn btn-fire" onclick="addFire()">🔥 Start Fire</button>
+          <button class="btn btn-ice" onclick="meltIce()">🌊 Melt Ice</button>
+          <button class="btn btn-reset" onclick="resetEarth()">♻️ Reset Earth</button>
+        </div>
+        
+        <div class="warning-box" id="warningBox" style="display: none;">
+          <h4>⚠️ Consequences:</h4>
+          <div id="warningList"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
 <script>
-const chat = document.getElementById('chat');
-const input = document.getElementById('text');
-const sendBtn = document.getElementById('send');
-
-const responses = {
-  sad: [
-    "I'm sorry you're feeling that way. Remember, even small steps count.",
-    "You're not alone — sadness comes and goes like weather.",
-    "Try writing one thing that made you smile before. It helps."
-  ],
-  tired: [
-    "You deserve rest — even a short nap can recharge your spirit.",
-    "Drink water, stretch, and breathe. Your body’s asking for care."
-  ],
-  happy: [
-    "Nice! Hold onto that feeling and share it if you can 💫",
-    "Let’s celebrate that! What’s making you happy today?"
-  ],
-  anxious: [
-    "Let's do 4-4-4 breathing: inhale 4s, hold 4s, exhale 4s.",
-    "It’s okay to slow down — you’re safe here. Try grounding yourself: look around and name 3 things you see."
-  ],
-  default: [
-    "I’m here with you. Tell me a bit more?",
-    "Thanks for sharing. Let’s figure this out together."
-  ]
+let data = {
+  health: 100,
+  temp: 15,
+  pollution: 0,
+  trash: 0,
+  ice: 100,
+  fires: 0
 };
 
-function addMsg(text, who) {
-  const div = document.createElement('div');
-  div.className = `msg ${who}`;
-  div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+function update() {
+  const health = Math.max(0, data.health);
+  const temp = data.temp.toFixed(1);
+  const pollution = Math.min(100, data.pollution);
+  const ice = Math.max(0, data.ice);
+  
+  // Update values
+  document.getElementById('healthValue').textContent = health.toFixed(0) + '%';
+  document.getElementById('tempValue').textContent = temp + '°C';
+  document.getElementById('pollutionValue').textContent = pollution.toFixed(0) + '%';
+  document.getElementById('trashValue').textContent = data.trash + ' tons';
+  document.getElementById('iceValue').textContent = ice.toFixed(0) + '%';
+  
+  // Health bar
+  const healthFill = document.getElementById('healthFill');
+  healthFill.style.width = health + '%';
+  
+  const healthCard = document.getElementById('healthCard');
+  if (health > 70) {
+    healthFill.style.background = '#4CAF50';
+    healthCard.className = 'stat-card';
+  } else if (health > 40) {
+    healthFill.style.background = '#ff9800';
+    healthCard.className = 'stat-card warning';
+  } else {
+    healthFill.style.background = '#f44336';
+    healthCard.className = 'stat-card danger';
+  }
+  
+  // Earth appearance
+  const earth = document.getElementById('earth');
+  
+  // Create a dark overlay effect based on health
+  let filterValue = '';
+  if (health > 70) {
+    earth.style.boxShadow = '0 0 60px rgba(46, 139, 87, 0.6)';
+    filterValue = 'brightness(1) saturate(1.2)';
+  } else if (health > 40) {
+    earth.style.boxShadow = '0 0 60px rgba(139, 115, 85, 0.6)';
+    filterValue = 'brightness(0.8) saturate(0.7) sepia(0.3)';
+  } else {
+    earth.style.boxShadow = '0 0 60px rgba(101, 67, 33, 0.6)';
+    filterValue = 'brightness(0.5) saturate(0.4) sepia(0.6)';
+  }
+  earth.style.filter = filterValue;
+  
+  // Pollution overlay
+  const pollutionOpacity = pollution / 100 * 0.8;
+  document.getElementById('pollution').style.background = `rgba(139, 69, 19, ${pollutionOpacity})`;
+  
+  // Ice caps
+  const iceSize = ice;
+  const iceTop = document.getElementById('iceTop');
+  const iceBottom = document.getElementById('iceBottom');
+  iceTop.style.width = iceSize + 'px';
+  iceTop.style.height = (iceSize / 2) + 'px';
+  iceBottom.style.width = iceSize + 'px';
+  iceBottom.style.height = (iceSize / 2) + 'px';
+  
+  // Card warnings
+  document.getElementById('tempCard').className = temp > 18 ? 'stat-card danger' : (temp > 16 ? 'stat-card warning' : 'stat-card');
+  document.getElementById('pollutionCard').className = pollution > 60 ? 'stat-card danger' : (pollution > 30 ? 'stat-card warning' : 'stat-card');
+  document.getElementById('iceCard').className = ice < 50 ? 'stat-card danger' : (ice < 75 ? 'stat-card warning' : 'stat-card');
+  
+  // Warnings
+  showWarnings();
 }
 
-function analyzeMood(text) {
-  text = text.toLowerCase();
-  if (text.includes('sad') || text.includes('lonely')) return 'sad';
-  if (text.includes('tired') || text.includes('sleep')) return 'tired';
-  if (text.includes('happy') || text.includes('good')) return 'happy';
-  if (text.includes('anxious') || text.includes('stress')) return 'anxious';
-  return 'default';
+function showWarnings() {
+  const warnings = [];
+  
+  if (data.pollution > 70) warnings.push('🫁 Severe air pollution causing respiratory diseases');
+  if (data.temp > 18) warnings.push('🌊 Rising sea levels flooding coastal cities');
+  if (data.ice < 50) warnings.push('🐧 Polar animals losing their habitat');
+  if (data.trash > 100) warnings.push('🐟 Ocean animals dying from plastic');
+  if (data.fires > 5) warnings.push('🌲 Massive deforestation and carbon release');
+  if (data.health < 40) warnings.push('☠️ Mass extinction event in progress');
+  
+  const box = document.getElementById('warningBox');
+  const list = document.getElementById('warningList');
+  
+  if (warnings.length > 0) {
+    box.style.display = 'block';
+    list.innerHTML = warnings.map(w => `<div class="warning-item">${w}</div>`).join('');
+  } else {
+    box.style.display = 'none';
+  }
 }
 
-function botReply(text) {
-  const mood = analyzeMood(text);
-  const arr = responses[mood];
-  const reply = arr[Math.floor(Math.random() * arr.length)];
-  setTimeout(() => addMsg(reply, 'bot'), 500);
+function addPollution() {
+  data.pollution += 15;
+  data.health -= 5;
+  data.temp += 0.3;
+  update();
 }
 
-function send() {
-  const text = input.value.trim();
-  if (!text) return;
-  addMsg(text, 'user');
-  input.value = '';
-  botReply(text);
+function addTrash() {
+  data.trash += 25;
+  data.health -= 3;
+  data.pollution += 5;
+  
+  const trash = document.createElement('div');
+  trash.className = 'trash-item';
+  const icons = ['🗑️', '🥤', '🍔', '📦', '🛍️', '🧴', '🥡'];
+  trash.textContent = icons[Math.floor(Math.random() * icons.length)];
+  trash.style.left = (Math.random() * 80 + 10) + '%';
+  trash.style.top = (Math.random() * 80 + 10) + '%';
+  document.getElementById('earth').appendChild(trash);
+  
+  update();
 }
 
-sendBtn.onclick = send;
-input.onkeydown = e => { if (e.key === 'Enter') send(); };
+function addFire() {
+  data.fires++;
+  data.temp += 0.5;
+  data.health -= 7;
+  data.pollution += 10;
+  
+  const fire = document.createElement('div');
+  fire.className = 'fire-item';
+  fire.textContent = '🔥';
+  fire.style.left = (Math.random() * 80 + 10) + '%';
+  fire.style.top = (Math.random() * 80 + 10) + '%';
+  document.getElementById('earth').appendChild(fire);
+  
+  update();
+}
 
-addMsg("Hey, I'm your Mood Buddy 😊 How are you feeling today?", 'bot');
+function meltIce() {
+  data.ice -= 20;
+  data.temp += 0.4;
+  data.health -= 6;
+  update();
+}
+
+function resetEarth() {
+  data = {
+    health: 100,
+    temp: 15,
+    pollution: 0,
+    trash: 0,
+    ice: 100,
+    fires: 0
+  };
+  
+  document.querySelectorAll('.trash-item, .fire-item').forEach(el => el.remove());
+  update();
+}
+
+update();
 </script>
 </body>
 </html>
