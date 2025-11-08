@@ -234,7 +234,7 @@
       padding: 2rem 1rem;
       text-align: center;
       font-size: 0.9rem;
-      opacity: 0.7;
+      opacity: 0.9;
       animation: fadeIn 2s ease-out;
     }
 
@@ -322,7 +322,8 @@
   <!-- PROJECTS GRID -->
   <div class="projects-container">
     <div class="projects" id="projectsGrid">
-      
+      <!-- (projects unchanged - omitted here for brevity; keep your original project cards) -->
+
       <!-- PROJECT 1 -->
       <a href="project1.html" class="project-card">
         <span class="project-icon">⚡</span>
@@ -374,7 +375,7 @@
       <!-- PROJECT 5 -->
       <a href="project5.html" class="project-card">
         <span class="project-icon">💡</span>
-        <h2 class="project-title">Your Project Title</h2>
+        <h2 class="project-title">EARTH SIMULATOR</h2>
         <p class="project-description">WANA KNOW WHAT OUR EARTH BECOMES WHEN WE ARE NOT AWARE?</p>
         <div class="project-tags">
           <span class="tag">CleanING environment</span>
@@ -386,7 +387,7 @@
       <!-- PROJECT 6 -->
       <a href="project6.html" class="project-card">
         <span class="project-icon">🌟</span>
-        <h2 class="project-title">Your Project Title</h2>
+        <h2 class="project-title">AFTERUS</h2>
         <p class="project-description">TIME IS LIKE A BOOK IN WHICH WE CAN ONLY MOVES PAGES AHEAD, SO BE MINDFUL WHILE SPENDING YOUR TIME</p>
         <div class="project-tags">
           <span class="tag">AGE CALCULATOR</span>
@@ -398,7 +399,7 @@
       <!-- PROJECT 7 - ADD YOUR OWN -->
       <a href="project7.html" class="project-card">
         <span class="project-icon">🔥</span>
-        <h2 class="project-title">Your Project Title</h2>
+        <h2 class="project-title">MY PROFILE</h2>
         <p class="project-description">NOT COMPLITED YET..........COMMING SOOONNNNNNNNN</p>
         <div class="project-tags">
           <span class="tag">Tag1</span>
@@ -416,28 +417,34 @@
   <!-- FOOTER -->
   <footer>
     Made with ❤️ by Kzzal — 
-    <a href="https://github.com/yourusername" target="_blank">GitHub</a> • 
-    <a href="jakibanjarkrijal@gmail.com">Contact</a>
+    <a href="mailto:jakibanjarkrijal@gmail.com">Contact</a> &nbsp; | &nbsp;
+    <span style="color:#9efaff; font-family: 'Roboto Mono', monospace;">jakibanjarkrijal@gmail.com</span>
   </footer>
 
   <script>
-    // Random quote generator
+    // Random quote generator (fixed: single-quoted strings to avoid nested double-quote issues)
     const quotes = [
-      ""Code is like humor. When you have to explain it, it's bad." – Cory House",
-      ""First, solve the problem. Then, write the code." – John Johnson",
-      ""Programs must be written for people to read." – Harold Abelson",
-      ""Talk is cheap. Show me the code." – Linus Torvalds",
-      ""Simplicity is the soul of efficiency." – Austin Freeman",
-      ""The best error message is the one that never shows up." – Thomas Fuchs",
-      ""Any fool can write code that a computer can understand. Good programmers write code that humans can understand." – Martin Fowler",
-      ""Experience is the name everyone gives to their mistakes." – Oscar Wilde"
+      'Code is like humor. When you have to explain it, it\'s bad. – Cory House',
+      'First, solve the problem. Then, write the code. – John Johnson',
+      'Programs must be written for people to read. – Harold Abelson',
+      'Talk is cheap. Show me the code. – Linus Torvalds',
+      'Simplicity is the soul of efficiency. – Austin Freeman',
+      'The best error message is the one that never shows up. – Thomas Fuchs',
+      'Any fool can write code that a computer can understand. Good programmers write code that humans can understand. – Martin Fowler',
+      'Experience is the name everyone gives to their mistakes. – Oscar Wilde'
     ];
     
-    document.getElementById("quote").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    // Ensure quote exists and pick a random one
+    const quoteEl = document.getElementById("quote");
+    if (quotes.length > 0) {
+      quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    } else {
+      quoteEl.textContent = 'Keep coding, keep improving.';
+    }
 
     // Auto-update project count
     const projectCards = document.querySelectorAll('.project-card');
     document.getElementById('projectCount').textContent = `${projectCards.length} Projects`;
   </script>
 </body>
-             </html>
+</html>
