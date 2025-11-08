@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4703291358979578"
-     crossorigin="anonymous"></script>
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kzzal’s Project Hub</title>
+  <title>Kzzal's Project Hub</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
 
@@ -22,18 +21,33 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
+      padding: 2rem 1rem;
       overflow-x: hidden;
-      padding: 1rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(2.5rem, 6vw, 4rem);
       color: #00ffff;
       text-shadow: 0 0 15px #00ffff;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
       animation: glow 3s infinite alternate;
     }
 
@@ -42,124 +56,388 @@
       to { text-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff; }
     }
 
-    p {
-      max-width: 600px;
-      margin: 0.5rem auto;
-      font-size: 1.1rem;
-      opacity: 0.85;
-      line-height: 1.5;
+    .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: #9efaff;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .project-count {
+      display: inline-block;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #00ffff;
+    }
+
+    /* ========== PROJECTS GRID ========== */
+    .projects-container {
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 3rem;
     }
 
     .projects {
-      margin: 2.5rem 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.2rem;
-      width: 100%;
-      max-width: 850px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      animation: fadeIn 1.2s ease-out;
     }
 
-    .project {
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ========== PROJECT CARD STYLES ========== */
+    .project-card {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 1.8rem 1rem;
-      border-radius: 18px;
+      border: 2px solid rgba(0, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
       text-decoration: none;
-      color: #00ffff;
-      font-size: 1.1rem;
-      font-weight: bold;
-      transition: 0.3s;
-      box-shadow: 0 0 15px rgba(0,255,255,0.1);
+      color: inherit;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated border effect */
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .project-card:hover::before {
+      left: 100%;
+    }
+
+    .project-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Project icon/emoji */
+    .project-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: block;
       text-align: center;
+      filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+      transition: transform 0.3s;
     }
 
-    .project:hover {
+    .project-card:hover .project-icon {
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    /* Project title */
+    .project-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: #00ffff;
+      margin-bottom: 0.8rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    /* Project description */
+    .project-description {
+      color: #9efaff;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+      opacity: 0.85;
+    }
+
+    /* Project tags */
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .tag {
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      color: #00ffff;
+    }
+
+    /* View button */
+    .view-btn {
       background: rgba(0, 255, 255, 0.1);
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 0 25px rgba(0,255,255,0.4);
+      border: 2px solid #00ffff;
+      color: #00ffff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
     }
 
+    .project-card:hover .view-btn {
+      background: rgba(0, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    /* ========== QUOTE SECTION ========== */
     .quote {
-      margin: 2rem auto;
+      max-width: 700px;
+      text-align: center;
       font-style: italic;
-      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-size: clamp(1rem, 3vw, 1.2rem);
       color: #9efaff;
       opacity: 0.9;
-      max-width: 600px;
-      line-height: 1.4;
-      padding: 0 1rem;
+      line-height: 1.6;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.15);
+      margin-bottom: 2rem;
+      animation: fadeIn 1.5s ease-out;
     }
 
+    /* ========== FOOTER ========== */
     footer {
-      margin-top: 3rem;
+      margin-top: auto;
+      padding: 2rem 1rem;
+      text-align: center;
       font-size: 0.9rem;
       opacity: 0.7;
-      text-align: center;
+      animation: fadeIn 2s ease-out;
     }
 
     footer a {
       color: #00ffff;
       text-decoration: none;
-      transition: color 0.3s;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    footer a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 50%;
+      background: #00ffff;
+      transition: all 0.3s;
+      transform: translateX(-50%);
+    }
+
+    footer a:hover::after {
+      width: 100%;
     }
 
     footer a:hover {
-      text-decoration: underline;
       color: #9efaff;
     }
 
-    /* --- MOBILE OPTIMIZATION --- */
-    @media (max-width: 600px) {
-      body {
-        justify-content: flex-start;
-        padding-top: 2rem;
-      }
-      h1 {
-        margin-bottom: 1rem;
-      }
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
       .projects {
-        margin: 2rem 0;
-        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
-      .project {
-        padding: 1.2rem;
-        font-size: 1rem;
+
+      .project-card {
+        padding: 1.5rem;
+      }
+
+      .project-icon {
+        font-size: 3rem;
+      }
+
+      .project-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* ========== SCROLL ANIMATIONS ========== */
+    .project-card {
+      animation: slideUp 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .project-card:nth-child(1) { animation-delay: 0.1s; }
+    .project-card:nth-child(2) { animation-delay: 0.2s; }
+    .project-card:nth-child(3) { animation-delay: 0.3s; }
+    .project-card:nth-child(4) { animation-delay: 0.4s; }
+    .project-card:nth-child(5) { animation-delay: 0.5s; }
+    .project-card:nth-child(6) { animation-delay: 0.6s; }
+    .project-card:nth-child(7) { animation-delay: 0.7s; }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
 </head>
 <body>
-  <h1>🚀 Welcome to Kzzal’s Project Hub</h1>
-  <p>I’m a passionate developer exploring creative web projects.</p>
-  <p>👇 Choose a project below to explore 👇</p>
-
-  <div class="projects">
-    <a href="project1.html" class="project">Project 1</a>
-    <a href="project2.html" class="project">Project 2</a>
-    <a href="project3.html" class="project">Project 3</a>
+  <!-- HEADER -->
+  <div class="header">
+    <h1>🚀 Kzzal's Project Hub</h1>
+    <p class="subtitle">Exploring the intersection of code, creativity, and innovation</p>
+    <span class="project-count" id="projectCount">7 Projects</span>
   </div>
 
+  <!-- PROJECTS GRID -->
+  <div class="projects-container">
+    <div class="projects" id="projectsGrid">
+      
+      <!-- PROJECT 1 -->
+      <a href="project1.html" class="project-card">
+        <span class="project-icon">⚡</span>
+        <h2 class="project-title">Speed Typing Game</h2>
+        <p class="project-description">Test your typing speed with real-time WPM tracking and accuracy metrics. Challenge yourself!</p>
+        <div class="project-tags">
+          <span class="tag">Game</span>
+          <span class="tag">Interactive</span>
+        </div>
+        <div class="view-btn">Launch Game →</div>
+      </a>
+
+      <!-- PROJECT 2 -->
+      <a href="project2.html" class="project-card">
+        <span class="project-icon">🎨</span>
+        <h2 class="project-title">AI Color Palette</h2>
+        <p class="project-description">Generate beautiful color schemes using AI. Perfect for designers and developers.</p>
+        <div class="project-tags">
+          <span class="tag">AI-Powered</span>
+          <span class="tag">Design</span>
+        </div>
+        <div class="view-btn">Generate Colors →</div>
+      </a>
+
+      <!-- PROJECT 3 -->
+      <a href="project3.html" class="project-card">
+        <span class="project-icon">🔐</span>
+        <h2 class="project-title">Password Generator</h2>
+        <p class="project-description">Create ultra-secure passwords with customizable options and instant strength analysis.</p>
+        <div class="project-tags">
+          <span class="tag">Security</span>
+          <span class="tag">Tool</span>
+        </div>
+        <div class="view-btn">Create Password →</div>
+      </a>
+
+      <!-- PROJECT 4 - ADD YOUR OWN -->
+      <a href="project4.html" class="project-card">
+        <span class="project-icon">🎯</span>
+        <h2 class="project-title">Your Project Title</h2>
+        <p class="project-description">Add your own description here. What does this project do?</p>
+        <div class="project-tags">
+          <span class="tag">Tag1</span>
+          <span class="tag">Tag2</span>
+        </div>
+        <div class="view-btn">View Project →</div>
+      </a>
+
+      <!-- PROJECT 5 - ADD YOUR OWN -->
+      <a href="project5.html" class="project-card">
+        <span class="project-icon">💡</span>
+        <h2 class="project-title">Your Project Title</h2>
+        <p class="project-description">Add your own description here. What makes this project special?</p>
+        <div class="project-tags">
+          <span class="tag">Tag1</span>
+          <span class="tag">Tag2</span>
+        </div>
+        <div class="view-btn">View Project →</div>
+      </a>
+
+      <!-- PROJECT 6 - ADD YOUR OWN -->
+      <a href="project6.html" class="project-card">
+        <span class="project-icon">🌟</span>
+        <h2 class="project-title">Your Project Title</h2>
+        <p class="project-description">Add your own description here. Tell visitors what they'll find.</p>
+        <div class="project-tags">
+          <span class="tag">Tag1</span>
+          <span class="tag">Tag2</span>
+        </div>
+        <div class="view-btn">View Project →</div>
+      </a>
+
+      <!-- PROJECT 7 - ADD YOUR OWN -->
+      <a href="project7.html" class="project-card">
+        <span class="project-icon">🔥</span>
+        <h2 class="project-title">Your Project Title</h2>
+        <p class="project-description">Add your own description here. Make it exciting!</p>
+        <div class="project-tags">
+          <span class="tag">Tag1</span>
+          <span class="tag">Tag2</span>
+        </div>
+        <div class="view-btn">View Project →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- QUOTE -->
   <div class="quote" id="quote">Loading quote...</div>
 
+  <!-- FOOTER -->
   <footer>
     Made with ❤️ by Kzzal — 
-    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+    <a href="https://github.com/yourusername" target="_blank">GitHub</a> • 
+    <a href="jakibanjarkrijal@gmail.com">Contact</a>
   </footer>
 
   <script>
+    // Random quote generator
     const quotes = [
-      "“Code is like humor. When you have to explain it, it’s bad.” – Cory House",
-      "“First, solve the problem. Then, write the code.” – John Johnson",
-      "“Programs must be written for people to read.” – Harold Abelson",
-      "“Talk is cheap. Show me the code.” – Linus Torvalds",
-      "“Simplicity is the soul of efficiency.” – Austin Freeman",
-      "“The best error message is the one that never shows up.” – Thomas Fuchs"
+      ""Code is like humor. When you have to explain it, it's bad." – Cory House",
+      ""First, solve the problem. Then, write the code." – John Johnson",
+      ""Programs must be written for people to read." – Harold Abelson",
+      ""Talk is cheap. Show me the code." – Linus Torvalds",
+      ""Simplicity is the soul of efficiency." – Austin Freeman",
+      ""The best error message is the one that never shows up." – Thomas Fuchs",
+      ""Any fool can write code that a computer can understand. Good programmers write code that humans can understand." – Martin Fowler",
+      ""Experience is the name everyone gives to their mistakes." – Oscar Wilde"
     ];
-    document.getElementById("quote").textContent =
-      quotes[Math.floor(Math.random() * quotes.length)];
+    
+    document.getElementById("quote").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // Auto-update project count
+    const projectCards = document.querySelectorAll('.project-card');
+    document.getElementById('projectCount').textContent = `${projectCards.length} Projects`;
   </script>
 </body>
-</html>
+             </html>
