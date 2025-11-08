@@ -170,9 +170,14 @@
             box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
         }
 
+        button:active {
+            transform: translateY(0px);
+        }
+
         button:disabled {
             opacity: 0.3;
             cursor: not-allowed;
+            transform: none;
         }
 
         .home-btn {
@@ -323,8 +328,8 @@
         />
 
         <div class="buttons">
-            <button id="startBtn" onclick="startGame()">START</button>
-            <button id="resetBtn" onclick="resetGame()">RESET</button>
+            <button id="startBtn">START</button>
+            <button id="resetBtn">RESET</button>
         </div>
 
         <div id="result"></div>
@@ -357,6 +362,7 @@
         const wpmElement = document.getElementById('wpm');
         const accuracyElement = document.getElementById('accuracy');
         const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const resultDiv = document.getElementById('result');
 
         function startGame() {
@@ -463,6 +469,10 @@
                 endGame();
             }
         });
+
+        // Add event listeners
+        startBtn.addEventListener('click', startGame);
+        resetBtn.addEventListener('click', resetGame);
     </script>
 </body>
 </html>
