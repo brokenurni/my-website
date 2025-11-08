@@ -7,12 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
       background: radial-gradient(circle at top, #0d0d0d, #000);
       color: #e0e0e0;
@@ -25,293 +20,139 @@
       overflow-x: hidden;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-      animation: fadeInDown 1s ease-out;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    .header { text-align:center; margin-bottom:3rem; animation: fadeInDown 1s ease-out; }
+    @keyframes fadeInDown { from {opacity:0; transform:translateY(-30px);} to {opacity:1; transform:translateY(0);} }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      color: #00ffff;
-      text-shadow: 0 0 15px #00ffff;
-      margin-bottom: 1rem;
+      font-size: clamp(2.5rem,6vw,4rem);
+      color:#00ffff;
+      text-shadow:0 0 15px #00ffff;
+      margin-bottom:1rem;
       animation: glow 3s infinite alternate;
     }
+    @keyframes glow { from {text-shadow:0 0 10px #00ffff;} to {text-shadow:0 0 25px #00ffff,0 0 50px #00ffff;} }
 
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #00ffff; }
-      to { text-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff; }
-    }
-
-    .subtitle {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: #9efaff;
-      margin-bottom: 0.5rem;
-      opacity: 0.9;
-    }
-
+    .subtitle { font-size:clamp(1rem,2.5vw,1.3rem); color:#9efaff; margin-bottom:0.5rem; opacity:0.9; }
     .project-count {
-      display: inline-block;
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      padding: 0.5rem 1.5rem;
-      border-radius: 20px;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #00ffff;
+      display:inline-block;
+      background: rgba(0,255,255,0.1);
+      border:1px solid rgba(0,255,255,0.3);
+      padding:0.5rem 1.5rem;
+      border-radius:20px;
+      margin-top:1rem;
+      font-size:0.9rem;
+      color:#00ffff;
     }
 
-    /* ========== PROJECTS GRID ========== */
-    .projects-container {
-      width: 100%;
-      max-width: 1200px;
-      margin-bottom: 3rem;
-    }
+    .projects-container { width:100%; max-width:1200px; margin-bottom:3rem; }
+    .projects { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; animation:fadeIn 1.2s ease-out; }
+    @keyframes fadeIn { from {opacity:0; transform:scale(0.95);} to {opacity:1; transform:scale(1);} }
 
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 2rem;
-      animation: fadeIn 1.2s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* ========== PROJECT CARD STYLES ========== */
     .project-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(0, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 2rem;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Animated border effect */
-    .project-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
-      transition: left 0.5s;
-    }
-
-    .project-card:hover::before {
-      left: 100%;
-    }
-
-    .project-card:hover {
-      transform: translateY(-10px) scale(1.03);
-      border-color: rgba(0, 255, 255, 0.6);
-      box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    /* Project icon/emoji */
-    .project-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      display: block;
-      text-align: center;
-      filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
-      transition: transform 0.3s;
-    }
-
-    .project-card:hover .project-icon {
-      transform: scale(1.2) rotate(5deg);
-    }
-
-    /* Project title */
-    .project-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      color: #00ffff;
-      margin-bottom: 0.8rem;
-      text-align: center;
-      font-weight: 700;
-    }
-
-    /* Project description */
-    .project-description {
-      color: #9efaff;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      flex-grow: 1;
-      opacity: 0.85;
-    }
-
-    /* Project tags */
-    .project-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    .tag {
-      background: rgba(0, 255, 255, 0.15);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      padding: 0.3rem 0.8rem;
-      border-radius: 15px;
-      font-size: 0.75rem;
-      color: #00ffff;
-    }
-
-    /* View button */
-    .view-btn {
-      background: rgba(0, 255, 255, 0.1);
-      border: 2px solid #00ffff;
-      color: #00ffff;
-      padding: 0.8rem 1.5rem;
-      border-radius: 10px;
-      font-weight: bold;
-      font-family: 'Orbitron', sans-serif;
-      text-align: center;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-
-    .project-card:hover .view-btn {
-      background: rgba(0, 255, 255, 0.3);
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-    }
-
-    /* ========== QUOTE SECTION ========== */
-    .quote {
-      max-width: 700px;
-      text-align: center;
-      font-style: italic;
-      font-size: clamp(1rem, 3vw, 1.2rem);
-      color: #9efaff;
-      opacity: 0.9;
-      line-height: 1.6;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 15px;
-      border: 1px solid rgba(0, 255, 255, 0.15);
-      margin-bottom: 2rem;
-      animation: fadeIn 1.5s ease-out;
-    }
-
-    /* ========== FOOTER ========== */
-    footer {
-      margin-top: auto;
-      padding: 2rem 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      opacity: 0.9;
-      animation: fadeIn 2s ease-out;
-    }
-
-    footer a {
-      color: #00ffff;
-      text-decoration: none;
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    footer a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -2px;
-      left: 50%;
-      background: #00ffff;
-      transition: all 0.3s;
-      transform: translateX(-50%);
-    }
-
-    footer a:hover::after {
-      width: 100%;
-    }
-
-    footer a:hover {
-      color: #9efaff;
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      .projects {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-
-      .project-card {
-        padding: 1.5rem;
-      }
-
-      .project-icon {
-        font-size: 3rem;
-      }
-
-      .project-title {
-        font-size: 1.3rem;
-      }
-    }
-
-    /* ========== SCROLL ANIMATIONS ========== */
-    .project-card {
+      background: rgba(255,255,255,0.05);
+      border:2px solid rgba(0,255,255,0.2);
+      border-radius:20px;
+      padding:2rem;
+      text-decoration:none;
+      color:inherit;
+      transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+      box-shadow:0 0 20px rgba(0,255,255,0.1);
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      overflow:hidden;
       animation: slideUp 0.6s ease-out;
       animation-fill-mode: both;
     }
 
-    .project-card:nth-child(1) { animation-delay: 0.1s; }
-    .project-card:nth-child(2) { animation-delay: 0.2s; }
-    .project-card:nth-child(3) { animation-delay: 0.3s; }
-    .project-card:nth-child(4) { animation-delay: 0.4s; }
-    .project-card:nth-child(5) { animation-delay: 0.5s; }
-    .project-card:nth-child(6) { animation-delay: 0.6s; }
-    .project-card:nth-child(7) { animation-delay: 0.7s; }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .project-card::before {
+      content:'';
+      position:absolute;
+      top:0; left:-100%;
+      width:100%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.2), transparent);
+      transition:left 0.5s;
     }
+    .project-card:hover::before { left:100%; }
+    .project-card:hover {
+      transform:translateY(-10px) scale(1.03);
+      border-color: rgba(0,255,255,0.6);
+      box-shadow:0 10px 40px rgba(0,255,255,0.3);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .project-icon { font-size:3.5rem; margin-bottom:1rem; display:block; text-align:center; filter:drop-shadow(0 0 10px rgba(0,255,255,0.5)); transition: transform 0.3s; }
+    .project-card:hover .project-icon { transform:scale(1.2) rotate(5deg); }
+
+    .project-title { font-family:'Orbitron',sans-serif; font-size:1.5rem; color:#00ffff; margin-bottom:0.8rem; text-align:center; font-weight:700; }
+    .project-description { color:#9efaff; font-size:0.95rem; line-height:1.6; text-align:center; margin-bottom:1.5rem; flex-grow:1; opacity:0.85; }
+    .project-tags { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-bottom:1rem; }
+    .tag { background: rgba(0,255,255,0.15); border:1px solid rgba(0,255,255,0.3); padding:0.3rem 0.8rem; border-radius:15px; font-size:0.75rem; color:#00ffff; }
+
+    .view-btn {
+      background: rgba(0,255,255,0.1);
+      border:2px solid #00ffff;
+      color:#00ffff;
+      padding:0.8rem 1.5rem;
+      border-radius:10px;
+      font-weight:bold;
+      font-family:'Orbitron',sans-serif;
+      text-align:center;
+      transition: all 0.3s;
+      cursor:pointer;
+    }
+    .project-card:hover .view-btn { background: rgba(0,255,255,0.3); transform:scale(1.05); box-shadow:0 0 15px rgba(0,255,255,0.5); }
+
+    .quote {
+      max-width:700px;
+      text-align:center;
+      font-style:italic;
+      font-size:clamp(1rem,3vw,1.2rem);
+      color:#9efaff;
+      opacity:0.9;
+      line-height:1.6;
+      padding:2rem;
+      background: rgba(255,255,255,0.03);
+      border-radius:15px;
+      border:1px solid rgba(0,255,255,0.15);
+      margin-bottom:2rem;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    footer {
+      margin-top:auto;
+      padding:2rem 1rem;
+      text-align:center;
+      font-size:0.9rem;
+      opacity:0.9;
+      animation:fadeIn 2s ease-out;
+    }
+    footer a { color:#00ffff; text-decoration:none; transition: all 0.3s; position:relative; }
+    footer a::after { content:''; position:absolute; width:0; height:2px; bottom:-2px; left:50%; background:#00ffff; transition: all 0.3s; transform:translateX(-50%); }
+    footer a:hover::after { width:100%; }
+    footer a:hover { color:#9efaff; }
+
+    @media(max-width:768px){
+      .projects { grid-template-columns:1fr; gap:1.5rem; }
+      .project-card { padding:1.5rem; }
+      .project-icon { font-size:3rem; }
+      .project-title { font-size:1.3rem; }
+    }
+
+    .project-card:nth-child(1){animation-delay:0.1s;}
+    .project-card:nth-child(2){animation-delay:0.2s;}
+    .project-card:nth-child(3){animation-delay:0.3s;}
+    .project-card:nth-child(4){animation-delay:0.4s;}
+    .project-card:nth-child(5){animation-delay:0.5s;}
+    .project-card:nth-child(6){animation-delay:0.6s;}
+    .project-card:nth-child(7){animation-delay:0.7s;}
+
+    @keyframes slideUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
   </style>
 </head>
 <body>
+
   <!-- HEADER -->
   <div class="header">
     <h1>🚀 Kzzal's Project Hub</h1>
@@ -322,7 +163,6 @@
   <!-- PROJECTS GRID -->
   <div class="projects-container">
     <div class="projects" id="projectsGrid">
-      <!-- (projects unchanged - omitted here for brevity; keep your original project cards) -->
 
       <!-- PROJECT 1 -->
       <a href="project1.html" class="project-card">
@@ -333,7 +173,7 @@
           <span class="tag">Game</span>
           <span class="tag">Interactive</span>
         </div>
-        <div class="view-btn">Launch Game →</div>
+        <span class="view-btn">Launch Game →</span>
       </a>
 
       <!-- PROJECT 2 -->
@@ -345,7 +185,7 @@
           <span class="tag">AI-Powered</span>
           <span class="tag">Design</span>
         </div>
-        <div class="view-btn">Generate Colors →</div>
+        <span class="view-btn">Generate Colors →</span>
       </a>
 
       <!-- PROJECT 3 -->
@@ -357,55 +197,55 @@
           <span class="tag">Security</span>
           <span class="tag">Tool</span>
         </div>
-        <div class="view-btn">Create Password →</div>
+        <span class="view-btn">Create Password →</span>
       </a>
 
       <!-- PROJECT 4 -->
       <a href="project4.html" class="project-card">
         <span class="project-icon">🎯</span>
         <h2 class="project-title">Mini Game Hub</h2>
-        <p class="project-description">PLAY GAMES,FRESHEN YOUR MIND</p>
+        <p class="project-description">PLAY GAMES, FRESHEN YOUR MIND</p>
         <div class="project-tags">
-          <span class="tag">REFRESHING</span>
-          <span class="tag">GAMES</span>
+          <span class="tag">Refreshing</span>
+          <span class="tag">Games</span>
         </div>
-        <div class="view-btn">View Project →</div>
+        <span class="view-btn">View Project →</span>
       </a>
 
       <!-- PROJECT 5 -->
       <a href="project5.html" class="project-card">
         <span class="project-icon">💡</span>
-        <h2 class="project-title">EARTH SIMULATOR</h2>
-        <p class="project-description">WANA KNOW WHAT OUR EARTH BECOMES WHEN WE ARE NOT AWARE?</p>
+        <h2 class="project-title">Earth Simulator</h2>
+        <p class="project-description">Wanna know what our Earth becomes when we are not aware?</p>
         <div class="project-tags">
-          <span class="tag">CleanING environment</span>
-          <span class="tag">Makes US Happy</span>
+          <span class="tag">Environment</span>
+          <span class="tag">Awareness</span>
         </div>
-        <div class="view-btn">View Project →</div>
+        <span class="view-btn">View Project →</span>
       </a>
 
       <!-- PROJECT 6 -->
       <a href="project6.html" class="project-card">
         <span class="project-icon">🌟</span>
-        <h2 class="project-title">AFTERUS</h2>
-        <p class="project-description">TIME IS LIKE A BOOK IN WHICH WE CAN ONLY MOVES PAGES AHEAD, SO BE MINDFUL WHILE SPENDING YOUR TIME</p>
+        <h2 class="project-title">Afterus</h2>
+        <p class="project-description">Time is like a book in which we can only move pages ahead. Be mindful while spending your time.</p>
         <div class="project-tags">
-          <span class="tag">AGE CALCULATOR</span>
-          <span class="tag">MOTIVATOR</span>
+          <span class="tag">Motivation</span>
+          <span class="tag">Time Tracker</span>
         </div>
-        <div class="view-btn">View Project →</div>
+        <span class="view-btn">View Project →</span>
       </a>
 
-      <!-- PROJECT 7 - ADD YOUR OWN -->
+      <!-- PROJECT 7 -->
       <a href="project7.html" class="project-card">
         <span class="project-icon">🔥</span>
-        <h2 class="project-title">MY PROFILE</h2>
-        <p class="project-description">NOT COMPLITED YET..........COMMING SOOONNNNNNNNN</p>
+        <h2 class="project-title">My Profile</h2>
+        <p class="project-description">Not completed yet... Coming soon!</p>
         <div class="project-tags">
-          <span class="tag">Tag1</span>
-          <span class="tag">Tag2</span>
+          <span class="tag">Coming</span>
+          <span class="tag">Soon</span>
         </div>
-        <div class="view-btn">View Project →</div>
+        <span class="view-btn">View Project →</span>
       </a>
 
     </div>
@@ -422,7 +262,7 @@
   </footer>
 
   <script>
-    // Random quote generator (fixed: single-quoted strings to avoid nested double-quote issues)
+    // Random quote generator
     const quotes = [
       'Code is like humor. When you have to explain it, it\'s bad. – Cory House',
       'First, solve the problem. Then, write the code. – John Johnson',
@@ -433,16 +273,11 @@
       'Any fool can write code that a computer can understand. Good programmers write code that humans can understand. – Martin Fowler',
       'Experience is the name everyone gives to their mistakes. – Oscar Wilde'
     ];
-    
-    // Ensure quote exists and pick a random one
-    const quoteEl = document.getElementById("quote");
-    if (quotes.length > 0) {
-      quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-    } else {
-      quoteEl.textContent = 'Keep coding, keep improving.';
-    }
 
-    // Auto-update project count
+    const quoteEl = document.getElementById("quote");
+    quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // Update project count dynamically
     const projectCards = document.querySelectorAll('.project-card');
     document.getElementById('projectCount').textContent = `${projectCards.length} Projects`;
   </script>
