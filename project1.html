@@ -1,173 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ Speed Typing Challenge</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background: radial-gradient(circle at top, #1a0033, #000); color: #e0e0e0; font-family: 'Roboto Mono', monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
-.container { max-width:800px; width:100%; background: rgba(255,255,255,0.05); border:2px solid rgba(0,255,255,0.3); border-radius:20px; padding:40px; box-shadow:0 0 50px rgba(0,255,255,0.2); }
-h1 { font-family:'Orbitron', sans-serif; font-size:2.5em; color:#00ffff; text-align:center; margin-bottom:10px; text-shadow:0 0 20px #00ffff; animation:pulse 2s infinite; }
-@keyframes pulse { 0%,100%{text-shadow:0 0 10px #00ffff;} 50%{text-shadow:0 0 30px #00ffff,0 0 50px #00ffff;} }
-.stats { display:flex; justify-content:space-around; margin:30px 0; flex-wrap:wrap; gap:15px; }
-.stat-box { background: rgba(0,255,255,0.1); padding:15px 25px; border-radius:10px; border:1px solid rgba(0,255,255,0.3); min-width:150px; text-align:center; }
-.stat-label { font-size:0.9em; opacity:0.7; margin-bottom:5px; }
-.stat-value { font-size:2em; font-weight:bold; color:#00ffff; font-family:'Orbitron', sans-serif; }
-#textDisplay { background: rgba(0,0,0,0.5); padding:30px; border-radius:15px; font-size:1.5em; line-height:1.8; margin:30px 0; border:2px solid rgba(0,255,255,0.2); min-height:150px; letter-spacing:1px; }
-.correct { color:#00ff00; text-shadow:0 0 5px #00ff00; }
-.incorrect { color:#ff0000; background: rgba(255,0,0,0.2); text-shadow:0 0 5px #ff0000; }
-.current { background: rgba(0,255,255,0.3); border-bottom:3px solid #00ffff; animation:blink 1s infinite; }
-@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-#inputArea { width:100%; padding:20px; font-size:1.2em; background: rgba(0,0,0,0.5); border:2px solid rgba(0,255,255,0.3); border-radius:10px; color:#00ffff; font-family:'Roboto Mono', monospace; margin-bottom:20px; }
-#inputArea:focus { outline:none; border-color:#00ffff; box-shadow:0 0 20px rgba(0,255,255,0.4); }
-#inputArea:disabled { opacity:0.5; cursor:not-allowed; }
-.buttons { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; }
-button { padding:15px 30px; font-size:1.1em; font-weight:bold; border:2px solid #00ffff; background: rgba(0,255,255,0.1); color:#00ffff; border-radius:10px; cursor:pointer; transition:all 0.3s; font-family:'Orbitron', sans-serif; }
-button:hover { background: rgba(0,255,255,0.3); transform:translateY(-2px); box-shadow:0 5px 20px rgba(0,255,255,0.4); }
-button:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
-#result { margin-top:20px; padding:20px; background: rgba(0,255,0,0.1); border:2px solid #00ff00; border-radius:10px; display:none; }
-#result h2 { color:#00ff00; margin-bottom:15px; font-family:'Orbitron', sans-serif; }
-#result p { font-size:1.1em; margin:8px 0; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Speed Typing Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1a0033, #000);
+            color: #e0e0e0;
+            font-family: 'Roboto Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .header-section {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 10px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 10px #00ffff; }
+            50% { text-shadow: 0 0 30px #00ffff, 0 0 50px #00ffff; }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #textDisplay {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            line-height: 1.8;
+            margin: 30px 0;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            min-height: 150px;
+            letter-spacing: 1px;
+        }
+
+        .correct {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .incorrect {
+            color: #ff0000;
+            background: rgba(255, 0, 0, 0.2);
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        .current {
+            background: rgba(0, 255, 255, 0.3);
+            border-bottom: 3px solid #00ffff;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #inputArea {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2em;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #00ffff;
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        #inputArea:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+
+        #inputArea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        button:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0px);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            display: none;
+        }
+
+        #result h2 {
+            color: #00ff00;
+            margin-bottom: 15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #result p {
+            font-size: 1.1em;
+            margin: 8px 0;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<h1>⚡ Speed Typing Challenge</h1>
+    <div class="header-section">
+        <a href="index.html" class="home-btn">← Back Home</a>
+    </div>
 
-<div class="stats">
-    <div class="stat-box"><div class="stat-label">Time</div><div class="stat-value" id="timer">60</div></div>
-    <div class="stat-box"><div class="stat-label">WPM</div><div class="stat-value" id="wpm">0</div></div>
-    <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-value" id="accuracy">100%</div></div>
-</div>
+    <div class="container">
+        <h1>⚡ Speed Typing Challenge</h1>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Time</div>
+                <div class="stat-value" id="timer">60</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">WPM</div>
+                <div class="stat-value" id="wpm">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">100%</div>
+            </div>
+        </div>
 
-<div id="textDisplay"></div>
+        <div id="textDisplay"></div>
 
-<input type="text" id="inputArea" placeholder="Click START to begin typing..." disabled/>
+        <input 
+            type="text" 
+            id="inputArea" 
+            placeholder="Click START to begin typing..."
+            disabled
+        />
 
-<div class="buttons">
-    <button id="startBtn">START</button>
-    <button id="resetBtn">RESET</button>
-</div>
+        <div class="buttons">
+            <button id="startBtn">START</button>
+            <button id="resetBtn">RESET</button>
+        </div>
 
-<div id="result"></div>
-</div>
+        <div id="result"></div>
+    </div>
 
-<script>
-const texts = [
-"The quick brown fox jumps over the lazy dog while the sun sets beautifully in the distance.",
-"Programming is the art of telling another human being what one wants the computer to do.",
-"In the digital age, coding has become an essential skill for solving complex problems efficiently.",
-"Web development combines creativity with technical skills to build amazing user experiences.",
-"The future belongs to those who learn more skills and combine them in creative ways.",
-"Artificial intelligence is transforming how we interact with technology in our daily lives.",
-"Every expert was once a beginner who refused to give up on their dreams and goals.",
-"Success is not final, failure is not fatal, it is the courage to continue that counts.",
-"Innovation distinguishes between a leader and a follower in the competitive tech industry.",
-"The only way to do great work is to love what you do and pursue it with passion."
-];
+    <!-- MINIMAL JS FIX FOR START BUTTON -->
+    <script>
+        const texts = [
+            "The quick brown fox jumps over the lazy dog while the sun sets beautifully in the distance.",
+            "Programming is the art of telling another human being what one wants the computer to do.",
+            "In the digital age, coding has become an essential skill for solving complex problems efficiently.",
+            "Web development combines creativity with technical skills to build amazing user experiences.",
+            "The future belongs to those who learn more skills and combine them in creative ways.",
+            "Artificial intelligence is transforming how we interact with technology in our daily lives.",
+            "Every expert was once a beginner who refused to give up on their dreams and goals.",
+            "Success is not final, failure is not fatal, it is the courage to continue that counts.",
+            "Innovation distinguishes between a leader and a follower in the competitive tech industry.",
+            "The only way to do great work is to love what you do and pursue it with passion."
+        ];
 
-let currentText = '';
-let startTime = 0;
-let timerInterval;
-let timeLeft = 60;
-let correctChars = 0;
-let totalChars = 0;
+        let currentText = '';
+        let startTime = 0;
+        let timerInterval;
+        let timeLeft = 60;
+        let correctChars = 0;
+        let totalChars = 0;
 
-const textDisplay = document.getElementById('textDisplay');
-const inputArea = document.getElementById('inputArea');
-const timerElement = document.getElementById('timer');
-const wpmElement = document.getElementById('wpm');
-const accuracyElement = document.getElementById('accuracy');
-const startBtn = document.getElementById('startBtn');
-const resetBtn = document.getElementById('resetBtn');
-const resultDiv = document.getElementById('result');
+        const textDisplay = document.getElementById('textDisplay');
+        const inputArea = document.getElementById('inputArea');
+        const timerElement = document.getElementById('timer');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultDiv = document.getElementById('result');
 
-function startGame() {
-    resetGame();
-    currentText = texts[Math.floor(Math.random()*texts.length)];
-    displayText();
-    inputArea.disabled = false;
-    inputArea.value = '';
-    inputArea.focus();
-    startBtn.disabled = true;
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
-    resultDiv.style.display = 'none';
-}
+        function startGame() {
+            resetGame();
+            currentText = texts[Math.floor(Math.random() * texts.length)];
+            displayText();
+            
+            inputArea.disabled = false;
+            inputArea.value = '';
+            inputArea.focus();
+            startBtn.disabled = true;
+            
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            resultDiv.style.display = 'none';
+        }
 
-function displayText() {
-    textDisplay.innerHTML = currentText.split('').map((char,index)=>
-        `<span id="char${index}">${char}</span>`
-    ).join('');
-    document.getElementById('char0').classList.add('current'); // highlight first char
-}
+        function displayText() {
+            textDisplay.innerHTML = currentText.split('').map((char, index) =>
+                `<span id="char${index}">${char}</span>`
+            ).join('');
+            
+            if(document.getElementById('char0')) document.getElementById('char0').classList.add('current');
+        }
 
-function updateTimer() {
-    timeLeft--;
-    timerElement.textContent = timeLeft;
-    if(timeLeft<=0) endGame();
-}
+        function updateTimer() {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) endGame();
+        }
 
-function endGame() {
-    clearInterval(timerInterval);
-    inputArea.disabled = true;
-    startBtn.disabled = false;
-    const accuracy = totalChars>0 ? Math.round((correctChars/totalChars)*100):0;
-    const wordsTyped = correctChars/5;
-    const minutes = (60-timeLeft)/60;
-    const wpm = Math.round(wordsTyped/minutes);
-    resultDiv.innerHTML = `
-        <h2>🎉 Game Over!</h2>
-        <p>⚡ Speed: <strong>${wpm} WPM</strong></p>
-        <p>🎯 Accuracy: <strong>${accuracy}%</strong></p>
-        <p>✅ Correct Characters: <strong>${correctChars}</strong></p>
-        <p>⏱️ Time: <strong>${60-timeLeft} seconds</strong></p>
-    `;
-    resultDiv.style.display='block';
-}
+        function endGame() {
+            clearInterval(timerInterval);
+            inputArea.disabled = true;
+            startBtn.disabled = false;
+            
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            const wordsTyped = correctChars / 5;
+            const minutes = (60 - timeLeft) / 60;
+            const wpm = Math.round(wordsTyped / minutes);
+            
+            resultDiv.innerHTML = `
+                <h2>🎉 Game Over!</h2>
+                <p>⚡ Speed: <strong>${wpm} WPM</strong></p>
+                <p>🎯 Accuracy: <strong>${accuracy}%</strong></p>
+                <p>✅ Correct Characters: <strong>${correctChars}</strong></p>
+                <p>⏱️ Time: <strong>${60 - timeLeft} seconds</strong></p>
+            `;
+            resultDiv.style.display = 'block';
+        }
 
-function resetGame() {
-    clearInterval(timerInterval);
-    timeLeft=60; correctChars=0; totalChars=0;
-    timerElement.textContent='60';
-    wpmElement.textContent='0';
-    accuracyElement.textContent='100%';
-    inputArea.value=''; inputArea.disabled=true;
-    startBtn.disabled=false;
-    textDisplay.innerHTML='';
-    resultDiv.style.display='none';
-}
+        function resetGame() {
+            clearInterval(timerInterval);
+            timeLeft = 60;
+            correctChars = 0;
+            totalChars = 0;
+            timerElement.textContent = '60';
+            wpmElement.textContent = '0';
+            accuracyElement.textContent = '100%';
+            inputArea.value = '';
+            inputArea.disabled = true;
+            startBtn.disabled = false;
+            textDisplay.innerHTML = '';
+            resultDiv.style.display = 'none';
+        }
 
-inputArea.addEventListener('input',function(e){
-    const typed = e.target.value;
-    const textArray = currentText.split('');
-    totalChars = typed.length;
-    correctChars = 0;
+        inputArea.addEventListener('input', function(e) {
+            const typed = e.target.value;
+            const textArray = currentText.split('');
+            
+            totalChars = typed.length;
+            correctChars = 0;
+            
+            textArray.forEach((char, index) => {
+                const charElement = document.getElementById(`char${index}`);
+                
+                if (index < typed.length) {
+                    if (typed[index] === char) {
+                        charElement.className = 'correct';
+                        correctChars++;
+                    } else {
+                        charElement.className = 'incorrect';
+                    }
+                } else if (index === typed.length) {
+                    charElement.className = 'current';
+                } else {
+                    charElement.className = '';
+                }
+            });
+            
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 100;
+            accuracyElement.textContent = accuracy + '%';
+            
+            const wordsTyped = correctChars / 5;
+            const minutes = (60 - timeLeft) / 60;
+            const wpm = minutes > 0 ? Math.round(wordsTyped / minutes) : 0;
+            wpmElement.textContent = wpm;
+            
+            if (typed.length === currentText.length && correctChars === currentText.length) {
+                endGame();
+            }
+        });
 
-    textArray.forEach((char,index)=>{
-        const charElement = document.getElementById(`char${index}`);
-        if(index<typed.length){
-            if(typed[index]===char){ charElement.className='correct'; correctChars++; }
-            else charElement.className='incorrect';
-        } else if(index===typed.length) charElement.className='current';
-        else charElement.className='';
-    });
-
-    const accuracy = totalChars>0 ? Math.round((correctChars/totalChars)*100):100;
-    accuracyElement.textContent = accuracy + '%';
-
-    const wordsTyped = correctChars/5;
-    const minutes = (60-timeLeft)/60;
-    const wpm = minutes>0 ? Math.round(wordsTyped/minutes):0;
-    wpmElement.textContent = wpm;
-
-    if(typed.length===currentText.length && correctChars===currentText.length) endGame();
-});
-
-startBtn.addEventListener('click',startGame);
-resetBtn.addEventListener('click',resetGame);
-</script>
+        startBtn.addEventListener('click', startGame);
+        resetBtn.addEventListener('click', resetGame);
+    </script>
 </body>
 </html>
