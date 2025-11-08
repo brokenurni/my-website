@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Color Palette Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1a0033, #000);
+            color: #e0e0e0;
+            font-family: 'Roboto Mono', monospace;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            z-index: 100;
+        }
+
+        .home-btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ffff; }
+            to { text-shadow: 0 0 30px #00ffff, 0 0 50px #00ffff; }
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .input-group {
+            display: inline-flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #00ffff;
+            font-family: 'Roboto Mono', monospace;
+            min-width: 300px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        button:hover:not(:disabled) {
+            background: rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .color-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .color-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .color-display {
+            height: 150px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .color-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .color-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00ffff;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .color-code {
+            font-size: 1em;
+            color: #9efaff;
+            letter-spacing: 1px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #00ffff;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 255, 0.2);
+            border-top: 4px solid #00ffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 255, 0, 0.9);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        .examples {
+            text-align: center;
+            margin: 20px 0;
+            color: #9efaff;
+        }
+
+        .example-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .example-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            input[type="text"] {
+                min-width: 200px;
+                font-size: 1em;
+            }
+
+            .palette-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">← Back Home</a>
+
+    <div class="container">
+        <h1>🎨 AI Color Palette Generator</h1>
+        
+        <div class="controls">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="themeInput" 
+                    placeholder="Enter a theme (e.g., ocean, sunset, forest)"
+                />
+                <button onclick="generatePalette()" id="generateBtn">Generate</button>
+                <button onclick="randomPalette()">Random</button>
+            </div>
+            
+            <div class="examples">
+                <p>Try: 
+                    <span class="example-btn" onclick="setTheme('ocean sunset')">Ocean Sunset</span>
+                    <span class="example-btn" onclick="setTheme('cyberpunk neon')">Cyberpunk</span>
+                    <span class="example-btn" onclick="setTheme('autumn forest')">Autumn</span>
+                    <span class="example-btn" onclick="setTheme('pastel dreams')">Pastel</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your perfect palette...</p>
+        </div>
+
+        <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard! ✓</div>
+
+    <script>
+        function setTheme(theme) {
+            document.getElementById('themeInput').value = theme;
+            generatePalette();
+        }
+
+        function randomPalette() {
+            const randomThemes = [
+                'tropical paradise', 'northern lights', 'deep space', 'cherry blossom',
+                'desert sunset', 'mint chocolate', 'royal elegance', 'candy shop',
+                'midnight city', 'spring garden', 'volcanic eruption', 'ice palace'
+            ];
+            const theme = randomThemes[Math.floor(Math.random() * randomThemes.length)];
+            document.getElementById('themeInput').value = theme;
+            generatePalette();
+        }
+
+        async function generatePalette() {
+            const theme = document.getElementById('themeInput').value.trim();
+            
+            if (!theme) {
+                alert('Please enter a theme!');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const paletteGrid = document.getElementById('paletteGrid');
+            const generateBtn = document.getElementById('generateBtn');
+
+            loading.style.display = 'block';
+            paletteGrid.innerHTML = '';
+            generateBtn.disabled = true;
+
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        messages: [{
+                            role: "user",
+                            content: `Generate a beautiful 6-color palette inspired by: "${theme}". 
+                            
+Respond ONLY with a JSON array (no markdown, no preamble):
+[
+  {"name": "Color Name", "hex": "#HEXCODE"},
+  {"name": "Color Name", "hex": "#HEXCODE"},
+  ...
+]
+
+Make the colors harmonious and visually appealing for the theme.`
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                let responseText = data.content.find(item => item.type === 'text')?.text || '';
+                
+                const cleanText = responseText.replace(/```json|```/g, '').trim();
+                const colors = JSON.parse(cleanText);
+
+                displayPalette(colors);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate palette. Please try again!');
+            } finally {
+                loading.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        }
+
+        function displayPalette(colors) {
+            const paletteGrid = document.getElementById('paletteGrid');
+            paletteGrid.innerHTML = '';
+
+            colors.forEach((color, index) => {
+                const card = document.createElement('div');
+                card.className = 'color-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="color-display" style="background-color: ${color.hex}"></div>
+                    <div class="color-info">
+                        <div class="color-name">${color.name}</div>
+                        <div class="color-code">${color.hex}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => copyToClipboard(color.hex));
+                paletteGrid.appendChild(card);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = `Copied ${text} ✓`;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // Allow Enter key to generate
+        document.getElementById('themeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generatePalette();
+            }
+        });
+
+        // Generate a default palette on load
+        window.addEventListener('load', () => {
+            document.getElementById('themeInput').value = 'cosmic nebula';
+            setTimeout(() => generatePalette(), 500);
+        });
+    </script>
+</body>
+</html>
