@@ -25,6 +25,12 @@
             padding: 20px;
         }
 
+        .header-section {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
         .container {
             max-width: 800px;
             width: 100%;
@@ -170,9 +176,6 @@
         }
 
         .home-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
             padding: 10px 20px;
             background: rgba(0, 255, 255, 0.2);
             border: 2px solid #00ffff;
@@ -182,6 +185,8 @@
             font-weight: bold;
             transition: all 0.3s;
             font-family: 'Orbitron', sans-serif;
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
         .home-btn:hover {
@@ -210,32 +215,85 @@
         }
 
         @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
             .container {
-                padding: 20px;
+                padding: 15px;
+                margin-top: 0;
             }
 
             h1 {
-                font-size: 1.8em;
+                font-size: 1.5em;
+                margin-bottom: 5px;
             }
 
-            #textDisplay {
-                font-size: 1.2em;
-                padding: 20px;
+            .stats {
+                margin: 15px 0;
+                gap: 10px;
             }
 
-            #inputArea {
-                font-size: 1em;
-                padding: 15px;
+            .stat-box {
+                padding: 10px 15px;
+                min-width: 100px;
+                flex: 1;
+            }
+
+            .stat-label {
+                font-size: 0.75em;
             }
 
             .stat-value {
-                font-size: 1.5em;
+                font-size: 1.3em;
+            }
+
+            #textDisplay {
+                font-size: 1em;
+                padding: 15px;
+                margin: 15px 0;
+                line-height: 1.6;
+                min-height: 120px;
+            }
+
+            #inputArea {
+                font-size: 0.95em;
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 0.95em;
+            }
+
+            .home-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+                margin-bottom: 15px;
+            }
+
+            #result {
+                padding: 15px;
+                margin-top: 15px;
+            }
+
+            #result h2 {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+            }
+
+            #result p {
+                font-size: 0.95em;
+                margin: 5px 0;
             }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="home-btn">← Back Home</a>
+    <div class="header-section">
+        <a href="index.html" class="home-btn">← Back Home</a>
+    </div>
 
     <div class="container">
         <h1>⚡ Speed Typing Challenge</h1>
@@ -319,7 +377,7 @@
 
         function displayText() {
             textDisplay.innerHTML = currentText.split('').map((char, index) => 
-                `<span id="char${index}">${char}</span>`
+                <span id="char${index}">${char}</span>
             ).join('');
         }
 
@@ -375,7 +433,7 @@
             correctChars = 0;
             
             textArray.forEach((char, index) => {
-                const charElement = document.getElementById(`char${index}`);
+                const charElement = document.getElementById(char${index});
                 
                 if (index < typed.length) {
                     if (typed[index] === char) {
